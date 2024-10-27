@@ -1,4 +1,4 @@
-package com.distraction.s20jam2024;
+package com.distraction.ttd2024;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
