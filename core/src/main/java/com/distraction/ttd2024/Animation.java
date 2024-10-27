@@ -8,7 +8,12 @@ public class Animation {
 
     private int index;
     private float time;
-    private float interval;
+
+    public float interval;
+
+    public Animation(TextureRegion image) {
+        this(new TextureRegion[]{ image });
+    }
 
     public Animation(TextureRegion[] images) {
         this(images, -1);
