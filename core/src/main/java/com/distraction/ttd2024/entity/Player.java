@@ -13,11 +13,11 @@ public class Player extends Entity {
     // moving
     private static final float ACCEL = 6;
     private static final float FRICTION = 2;
-    private static final float MAX_SPEED = 200;
+    private static final float MAX_SPEED = 300;
 
     // dashing
     private static final float MAX_DASH_TIME = 3f;
-    private static final float MAX_DASH_SPEED = 400;
+    private static final float MAX_DASH_SPEED = 700;
     private float dashTime = 0;
 
     // broom
@@ -41,6 +41,8 @@ public class Player extends Entity {
     public void dash() {
         dashTime = MAX_DASH_TIME;
     }
+
+    public float truex() { return x + sx; }
 
     @Override
     public void update(float dt) {
@@ -89,7 +91,7 @@ public class Player extends Entity {
         sx += sdx * dt;
 
         // clamp position
-        y = MathUtils.clamp(y, h / 2, Constants.HEIGHT - h / 2f);
+        y = MathUtils.clamp(y, h / 2 + 15, Constants.HEIGHT - h / 2f);
         sx = MathUtils.clamp(sx, (w - Constants.WIDTH) / 2f, (Constants.WIDTH - w) / 2f);
 
         // update dash

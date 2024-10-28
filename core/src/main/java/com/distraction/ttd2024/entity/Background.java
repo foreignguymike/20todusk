@@ -12,13 +12,14 @@ public class Background extends Entity {
 
     private final Player player;
     private final TextureRegion[] images;
-    private final float[] parallax = new float[]{26f, 18f, 10f};
-    private final float[] xs = new float[3];
-    private final float[] heights = new float[]{130, 120, 110};
+    private final float[] parallax = new float[]{26f, 18f, 10f, 1f};
+    private final float[] xs = new float[4];
+    private final float[] heights = new float[]{130, 120, 110, 10};
     private final Color[] colors = new Color[]{
         Color.valueOf("8F5765"),
         Color.valueOf("392946"),
-        Color.valueOf("0F022E")
+        Color.valueOf("0F022E"),
+        Color.valueOf("2C645E")
     };
 
     private final TextureRegion pixel;

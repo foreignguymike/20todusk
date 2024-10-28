@@ -5,12 +5,18 @@ import com.badlogic.gdx.Input;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.entity.Background;
+import com.distraction.ttd2024.entity.Collectable;
 import com.distraction.ttd2024.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayScreen extends Screen {
 
     private final Player player;
     private final Background bg;
+
+    private List<Collectable> collectables;
 
     public PlayScreen(Context context) {
         super(context);
@@ -20,6 +26,9 @@ public class PlayScreen extends Screen {
         player.y = Constants.HEIGHT / 2f;
 
         bg = new Background(context, player);
+
+        collectables = new ArrayList<>();
+        collectables.add(new Collectable(context, Collectable.Type.SOUL, 1000, 200));
     }
 
     @Override
@@ -37,6 +46,16 @@ public class PlayScreen extends Screen {
         cam.update();
 
         bg.update(dt);
+
+        for (int i = 0; i < collectables.size(); i++) {
+            Collectable collectable = collectables.get(i);
+            if (collectable.overlaps(player.truex(), player.y, player.w, player.h)) {
+                collectables.remove(i--);
+                if (collectable.type == Collectable.Type.SOUL) {
+                    player.dash();
+                }
+            }
+        }
     }
 
     @Override
@@ -46,6 +65,10 @@ public class PlayScreen extends Screen {
         bg.render(sb);
         sb.setProjectionMatrix(cam.combined);
         player.render(sb);
+
+        for (Collectable collectable : collectables) {
+            collectable.render(sb);
+        }
         sb.end();
     }
 }
