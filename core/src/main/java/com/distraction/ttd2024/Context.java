@@ -54,6 +54,10 @@ public class Context {
         return list.toArray(new TextureRegion[0]);
     }
 
+    public TextureRegion getPixel() {
+        return assets.get(ATLAS_FILE, TextureAtlas.class).findRegion("pixel");
+    }
+
     public void dispose() {
         sb.dispose();
     }
