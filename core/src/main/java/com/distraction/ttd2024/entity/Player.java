@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.ttd2024.Animation;
+import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.Utils;
 
@@ -25,7 +26,11 @@ public class Player extends Entity {
     private float broomTime;
     private float broomy;
 
-    public boolean up, down;
+    // screen point
+    public float sx;
+    public float sdx;
+
+    public boolean up, down, left, right;
 
     public Player(Context context) {
         super(context);
@@ -57,22 +62,35 @@ public class Player extends Entity {
             dx += FRICTION;
             if (dx > 0) dx = 0;
         }
+        if (sdx > 0) {
+            sdx -= FRICTION;
+            if (sdx < 0) sdx = 0;
+        } else if (sdx < 0) {
+            sdx += FRICTION;
+            if (sdx > 0) sdx = 0;
+        }
 
         // velocity
         if (up) dy += ACCEL;
         if (down) dy -= ACCEL;
         dx += ACCEL;
+        if (left) sdx -= ACCEL;
+        if (right) sdx += ACCEL;
 
         // clamp max speed, dx clamps to dash
         float maxSpeed = dashTime > 0 ? MAX_DASH_SPEED : MAX_SPEED;
-        if (dy > MAX_SPEED) dy = MAX_SPEED;
-        if (dy < -MAX_SPEED) dy = -MAX_SPEED;
-        if (dx < -maxSpeed) dx = -maxSpeed;
-        if (dx > maxSpeed) dx = maxSpeed;
+        dx = MathUtils.clamp(dx, -maxSpeed, maxSpeed);
+        dy = MathUtils.clamp(dy, -MAX_SPEED, MAX_SPEED);
+        sdx = MathUtils.clamp(sdx, -MAX_SPEED, MAX_SPEED);
 
         // move
         x += dx * dt;
         y += dy * dt;
+        sx += sdx * dt;
+
+        // clamp position
+        y = MathUtils.clamp(y, h / 2, Constants.HEIGHT - h / 2f);
+        sx = MathUtils.clamp(sx, (w - Constants.WIDTH) / 2f, (Constants.WIDTH - w) / 2f);
 
         // update dash
         if (dashTime > 0) {
@@ -88,7 +106,7 @@ public class Player extends Entity {
     public void render(SpriteBatch sb) {
         sb.setColor(Color.WHITE);
         setImage(animation.getImage());
-        Utils.drawCentered(sb, image, x, y + broomy);
+        Utils.drawCentered(sb, image, x + sx, y + broomy);
     }
 
 }

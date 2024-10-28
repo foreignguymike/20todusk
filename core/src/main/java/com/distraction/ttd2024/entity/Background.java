@@ -12,7 +12,7 @@ public class Background extends Entity {
 
     private final Player player;
     private final TextureRegion[] images;
-    private final float[] parallax = new float[]{26f, 18f, 1f};
+    private final float[] parallax = new float[]{26f, 18f, 10f};
     private final float[] xs = new float[3];
     private final float[] heights = new float[]{130, 120, 110};
     private final Color[] colors = new Color[]{
@@ -51,6 +51,5 @@ public class Background extends Entity {
             sb.setColor(colors[i]);
             sb.draw(pixel, 0, 0, w, heights[i]);
         }
-
     }
 }

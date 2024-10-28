@@ -2,8 +2,6 @@ package com.distraction.ttd2024.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.entity.Background;
@@ -28,6 +26,8 @@ public class PlayScreen extends Screen {
     public void update(float dt) {
         player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
         player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+        player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+        player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
             player.dash(); // TODO make a pick up
         }
