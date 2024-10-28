@@ -24,6 +24,9 @@ public class PlayScreen extends Screen {
         player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
         player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+            player.setDashing();
+        }
 
         player.update(dt);
     }

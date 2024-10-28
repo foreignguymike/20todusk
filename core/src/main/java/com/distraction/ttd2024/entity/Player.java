@@ -13,6 +13,12 @@ public class Player extends Entity {
     private static final float FRICTION = 2;
     private static final float MAX_SPEED = 150;
 
+    // dashing
+    private static final float MAX_DASH_TIME = 2f;
+    private static final float MAX_DASH_SPEED = 300;
+    private boolean dashing;
+    private float dashTime = MAX_DASH_TIME;
+
     // broom
     private static final float BOUNCE_HEIGHT = 6f;
     private static final float BOUNCE_INTERVAL = 4f;
@@ -29,10 +35,15 @@ public class Player extends Entity {
         animation = new Animation(context.getImages("witch"), 0.2f);
     }
 
+    public void setDashing() {
+        if (dashing || dashTime < MAX_DASH_TIME) return;
+        dashing = true;
+    }
+
     @Override
     public void update(float dt) {
         animation.update(dt);
-        animation.interval = MathUtils.map(0, MAX_SPEED, 0.2f, 0.1f, Math.abs(dx));
+        animation.interval = MathUtils.map(0, MAX_DASH_SPEED, 0.2f, 0.04f, Math.abs(dx));
 
         // friction
         if (dy > 0) {
@@ -60,14 +71,27 @@ public class Player extends Entity {
         if (right) renderRight = true;
 
         // clamp max speed
-        if (dy > MAX_SPEED) dy = MAX_SPEED;
-        if (dy < -MAX_SPEED) dy = -MAX_SPEED;
-        if (dx < -MAX_SPEED) dx = -MAX_SPEED;
-        if (dx > MAX_SPEED) dx = MAX_SPEED;
+        float maxSpeed = dashing ? MAX_DASH_SPEED : MAX_SPEED;
+        if (dy > maxSpeed) dy = maxSpeed;
+        if (dy < -maxSpeed) dy = -maxSpeed;
+        if (dx < -maxSpeed) dx = -maxSpeed;
+        if (dx > maxSpeed) dx = maxSpeed;
 
         // move
         x += dx * dt;
         y += dy * dt;
+
+        // update dash
+        if (dashing) {
+            dashTime -= dt;
+            if (dashTime < 0) {
+                dashTime = 0;
+                dashing = false;
+            }
+        } else {
+            dashTime += dt / 2f;
+            if (dashTime > MAX_DASH_TIME) dashTime = MAX_DASH_TIME;
+        }
 
         broomTime += dt;
         broomy = MathUtils.sin(broomTime * BOUNCE_INTERVAL) * BOUNCE_HEIGHT;
