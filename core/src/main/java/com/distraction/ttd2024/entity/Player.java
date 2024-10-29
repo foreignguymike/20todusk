@@ -42,7 +42,13 @@ public class Player extends Entity {
         dashTime = MAX_DASH_TIME;
     }
 
-    public float truex() { return x + sx; }
+    public float truex() {
+        return x + sx;
+    }
+
+    public float truey() {
+        return y + broomy;
+    }
 
     @Override
     public void update(float dt) {
@@ -91,8 +97,8 @@ public class Player extends Entity {
         sx += sdx * dt;
 
         // clamp position
-        y = MathUtils.clamp(y, h / 2 + 15, Constants.HEIGHT - h / 2f);
-        sx = MathUtils.clamp(sx, (w - Constants.WIDTH) / 2f, (Constants.WIDTH - w) / 2f);
+        y = Utils.clampCallback(y, h / 2 + 15, Constants.HEIGHT - h / 2f, () -> dy = 0);
+        sx = Utils.clampCallback(sx, (w - Constants.WIDTH) / 2f, (Constants.WIDTH - w) / 2f, () -> sdx = 0);
 
         // update dash
         if (dashTime > 0) {
@@ -100,6 +106,7 @@ public class Player extends Entity {
             if (dashTime < 0) dashTime = 0;
         }
 
+        // broom bounce
         broomTime += dt;
         broomy = MathUtils.sin(broomTime * BOUNCE_INTERVAL) * BOUNCE_HEIGHT;
     }

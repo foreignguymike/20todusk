@@ -6,22 +6,25 @@ import com.distraction.ttd2024.Animation;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.Utils;
 
-public class Collectable extends Entity {
+public class Particle extends Entity {
 
     public enum Type {
-        SOUL
+        BUBBLE
     }
 
-    public Type type;
+    public Particle.Type type;
 
-    public Collectable(Context context, Type type, float x, float y) {
+    public boolean remove;
+
+    public Particle(Context context, Particle.Type type, float x, float y) {
         super(context);
         this.type = type;
         this.x = x;
         this.y = y;
 
-        if (type == Type.SOUL) {
-            animation = new Animation(context.getImage("soul"));
+        if (type == Type.BUBBLE) {
+            animation = new Animation(context.getImages("bubble"), 0.25f);
+            setImage(animation.getImage());
         } else {
             throw new IllegalStateException("couldn't find sprites for type " + type);
         }
@@ -31,6 +34,10 @@ public class Collectable extends Entity {
     public void update(float dt) {
         animation.update(dt);
         setImage(animation.getImage());
+
+        if (type == Type.BUBBLE) {
+            if (animation.playCount > 0) remove = true;
+        }
     }
 
     @Override

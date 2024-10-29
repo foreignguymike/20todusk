@@ -17,9 +17,15 @@ public class Utils {
         }
     }
 
-    public float clamp(float value, float min, float max) {
-        if (value < min) return min;
-        if (value > max) return max;
+    public static float clampCallback(float value, float min, float max, Runnable r) {
+        if (value < min) {
+            r.run();
+            return min;
+        }
+        if (value > max) {
+            r.run();
+            return max;
+        }
         return value;
     }
 

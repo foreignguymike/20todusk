@@ -10,6 +10,7 @@ public class Animation {
     private float time;
 
     public float interval;
+    public int playCount;
 
     public Animation(TextureRegion image) {
         this(new TextureRegion[]{ image });
@@ -30,7 +31,10 @@ public class Animation {
         while (time > interval) {
             time -= interval;
             index++;
-            if (index >= images.length) index = 0;
+            if (index >= images.length) {
+                index = 0;
+                playCount++;
+            }
         }
     }
 
