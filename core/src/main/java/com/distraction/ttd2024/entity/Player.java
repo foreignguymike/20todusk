@@ -8,6 +8,9 @@ import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player extends Entity {
 
     // moving
@@ -31,14 +34,34 @@ public class Player extends Entity {
     public float sx;
     public float sdx;
 
+    // input
     public boolean up, down, left, right;
+
+    // collectables
+    private List<Collectable.Type> collectables;
+    public int score;
+
+    // 2x
+    private static final float DOUBLE_TIME = 3f;
+    public float doubleTime;
+
+    // hit
+    private static final float HIT_INTERVAL = 1f;
+    private float hitTime;
+    private float hitAngle;
 
     public Player(Context context) {
         super(context);
 
+        collectables = new ArrayList<>();
         animation = new Animation(context.getImages("witch"), 0.2f);
+
+        sx = -100;
     }
 
+    /**
+     * Dunno if I want dash. It makes balancing difficult.
+     */
     public void dash() {
         dashTime = MAX_DASH_TIME;
     }
@@ -49,6 +72,30 @@ public class Player extends Entity {
 
     public float truey() {
         return y + broomy;
+    }
+
+    public void collect(Collectable.Type type) {
+        if (type == Collectable.Type.TWOX) doubleTime = DOUBLE_TIME;
+        if (type.hasScore()) collectables.add(type);
+        score += type.points * (doubleTime > 0 ? 2 : 1);
+        System.out.println("collected type " + type + ", points: " + (type.points * (doubleTime > 0 ? 2 : 1)));
+        System.out.println("score: " + score);
+    }
+
+    public List<Collectable.Type> hit() {
+        List<Collectable.Type> remove = new ArrayList<>();
+
+        if (hitTime > 0) return remove;
+        hitTime = HIT_INTERVAL;
+
+        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
+        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
+        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
+        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
+        for (Collectable.Type type : remove) {
+            score -= type.points;
+        }
+        return remove;
     }
 
     @Override
@@ -111,10 +158,23 @@ public class Player extends Entity {
         // broom bounce
         broomTime += dt;
         broomy = MathUtils.sin(broomTime * BOUNCE_INTERVAL) * BOUNCE_HEIGHT;
+
+        // hit
+        hitTime -= dt;
+
+        // double
+        doubleTime -= dt;
     }
 
     @Override
     public void render(SpriteBatch sb) {
+        if (hitTime > 0) {
+            if (hitTime % 0.2f < 0.1f) return;
+            sb.setColor(Color.WHITE);
+            hitAngle = 2 * MathUtils.PI * hitTime / HIT_INTERVAL;
+            Utils.drawCentered(sb, image, x + sx, y + broomy, hitAngle);
+            return;
+        }
         sb.setColor(Color.WHITE);
         setImage(animation.getImage());
         Utils.drawCentered(sb, image, x + sx, y + broomy);

@@ -41,7 +41,7 @@ public class PlayScreen extends Screen {
         ui = new UI(context, TOTAL_DISTANCE);
 
         player = new Player(context);
-        player.x = Constants.WIDTH / 2f;
+        player.x = 0;
         player.y = Constants.HEIGHT / 2f;
 
         bg = new Background(context, player, TOTAL_DISTANCE);
@@ -54,17 +54,37 @@ public class PlayScreen extends Screen {
         particles = new ArrayList<>();
     }
 
+    private void hit() {
+        List<Collectable.Type> hitList = player.hit();
+        for (int i = 0; i < hitList.size(); i++) {
+            Collectable.Type c = hitList.get(i);
+            Particle.Type p;
+            if (c == Collectable.Type.SOUL) p = Particle.Type.SOUL;
+            else if (c == Collectable.Type.BIGSOUL) p = Particle.Type.BIGSOUL;
+            else continue;
+            float dx = 50;
+            float dy = 50;
+            if (i == 1) dx *= -1;
+            else if (i == 2) dy *= -1;
+            else if (i == 3) {
+                dx *= -1;
+                dy *= -1;
+            }
+            particles.add(new Particle(context, p, player.truex(), player.truey(), player.dx + dx, dy));
+        }
+    }
+
     @Override
     public void update(float dt) {
         time += dt;
 
+        if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+            context.sm.replace(new PlayScreen(context));
+        }
         player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
         player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
         player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-            player.dash(); // TODO make a pick up
-        }
 
         player.update(dt);
 
@@ -77,15 +97,20 @@ public class PlayScreen extends Screen {
 
         for (int i = 0; i < collectables.size(); i++) {
             Collectable collectable = collectables.get(i);
-            boolean collided = false;
+            boolean collided;
             if (collectable.type == Collectable.Type.SPIKE) {
                 collided = collectable.contains(player.truex(), player.truey());
+                if (collided) {
+                    hit();
+                }
             } else {
                 collided = collectable.overlaps(player.truex(), player.y, player.w, player.h);
+                if (collided) player.collect(collectable.type);
             }
             if (collided || player.x - collectable.x > Constants.WIDTH) {
                 collectables.remove(i--);
             }
+
         }
 
         for (int i = 0; i < particles.size(); i++) {
@@ -123,6 +148,7 @@ public class PlayScreen extends Screen {
         ui.render(sb);
 
 //        font.draw(sb, "time: " + String.format("%.1f", 20f - time), 3, 15);
+        font.draw(sb, "score: " + player.score, 3, 15);
         sb.end();
     }
 }

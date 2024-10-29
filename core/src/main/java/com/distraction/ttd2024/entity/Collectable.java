@@ -9,10 +9,20 @@ import com.distraction.ttd2024.Utils;
 public class Collectable extends Entity {
 
     public enum Type {
-        SOUL,
-        BIGSOUL,
-        TWOX,
-        SPIKE
+        SOUL(100),
+        BIGSOUL(400),
+        TWOX(0),
+        SPIKE(0);
+
+        public int points;
+
+        Type(int points) {
+            this.points = points;
+        }
+
+        boolean hasScore() {
+            return points > 0;
+        }
     }
 
     public Type type;
