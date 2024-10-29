@@ -2,9 +2,6 @@ package com.distraction.ttd2024;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.distraction.ttd2024.screen.PlayScreen;
 
@@ -15,6 +12,8 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
+        Data.load();
+
         context = new Context();
         context.sm.push(new PlayScreen(context));
     }

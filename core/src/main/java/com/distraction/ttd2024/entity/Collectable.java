@@ -9,7 +9,10 @@ import com.distraction.ttd2024.Utils;
 public class Collectable extends Entity {
 
     public enum Type {
-        SOUL
+        SOUL,
+        BIGSOUL,
+        TWOX,
+        SPIKE
     }
 
     public Type type;
@@ -20,17 +23,19 @@ public class Collectable extends Entity {
         this.x = x;
         this.y = y;
 
-        if (type == Type.SOUL) {
-            animation = new Animation(context.getImage("soul"));
-        } else {
-            throw new IllegalStateException("couldn't find sprites for type " + type);
-        }
+        if (type == Type.SOUL) animation = new Animation(context.getImage("soul"));
+        else if (type == Type.BIGSOUL) animation = new Animation(context.getImage("bigsoul"));
+        else if (type == Type.TWOX) animation = new Animation(context.getImage("2x"));
+        else if (type == Type.SPIKE) animation = new Animation(context.getImage("spike"));
+        else throw new IllegalStateException("couldn't find sprites for type " + type);
+        setImage(animation.getImage());
     }
 
     @Override
     public void update(float dt) {
         animation.update(dt);
         setImage(animation.getImage());
+        w = h = 1;
     }
 
     @Override

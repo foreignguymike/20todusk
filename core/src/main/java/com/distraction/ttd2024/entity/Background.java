@@ -50,7 +50,7 @@ public class Background extends Entity {
         sb.setColor(BG);
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
         sb.setColor(0, 0, MathUtils.clamp(0.2f * player.x / totalDistance, 0, 0.2f), MathUtils.clamp(0.9f * player.x / totalDistance, 0, 0.9f));
-//        sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+        sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
         for (int i = 0; i < images.length; i++) {
             sb.setColor(Color.WHITE);
             sb.draw(images[i], xs[i], heights[i]);
@@ -60,6 +60,6 @@ public class Background extends Entity {
             sb.draw(pixel, 0, 0, Constants.WIDTH, heights[i]);
         }
         sb.setColor(0, 0, 0, MathUtils.clamp(0.75f * player.x / totalDistance, 0, 0.75f));
-//        sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+        sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
     }
 }

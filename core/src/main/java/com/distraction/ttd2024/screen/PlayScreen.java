@@ -19,7 +19,7 @@ import java.util.List;
 public class PlayScreen extends Screen {
 
     private static final float BUBBLE_INTERVAL = 0.1f;
-    private static final float TOTAL_DISTANCE = 10000;
+    private static final float TOTAL_DISTANCE = 6000;
 
     private float time;
 
@@ -30,6 +30,8 @@ public class PlayScreen extends Screen {
 
     private List<Collectable> collectables;
     private List<Particle> particles;
+
+    private BitmapFont font = new BitmapFont();
 
     private float bubbleTime;
 
@@ -65,6 +67,7 @@ public class PlayScreen extends Screen {
         }
 
         player.update(dt);
+
         cam.position.x = player.x;
         cam.update();
 
@@ -74,12 +77,13 @@ public class PlayScreen extends Screen {
 
         for (int i = 0; i < collectables.size(); i++) {
             Collectable collectable = collectables.get(i);
-            if (collectable.overlaps(player.truex(), player.y, player.w, player.h)) {
-                collectables.remove(i--);
-                if (collectable.type == Collectable.Type.SOUL) {
-//                    player.dash();
-                }
-            } else if (player.x - collectable.x > Constants.WIDTH) {
+            boolean collided = false;
+            if (collectable.type == Collectable.Type.SPIKE) {
+                collided = collectable.contains(player.truex(), player.truey());
+            } else {
+                collided = collectable.overlaps(player.truex(), player.y, player.w, player.h);
+            }
+            if (collided || player.x - collectable.x > Constants.WIDTH) {
                 collectables.remove(i--);
             }
         }
@@ -109,18 +113,16 @@ public class PlayScreen extends Screen {
         sb.setProjectionMatrix(cam.combined);
         player.render(sb);
         for (Collectable collectable : collectables) {
-//            collectable.render(sb);
+            collectable.render(sb);
         }
         for (Particle particle : particles) {
             particle.render(sb);
         }
 
         sb.setProjectionMatrix(uiCam.combined);
-//        ui.render(sb);
+        ui.render(sb);
 
-//        font.draw(sb, time + "", 10, 10);
+//        font.draw(sb, "time: " + String.format("%.1f", 20f - time), 3, 15);
         sb.end();
     }
-
-    private BitmapFont font = new BitmapFont();
 }

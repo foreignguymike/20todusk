@@ -16,8 +16,9 @@ public class Player extends Entity {
     private static final float MAX_SPEED = 300;
 
     // dashing
+    private static final float DASH_ACCEL = 12;
     private static final float MAX_DASH_TIME = 3f;
-    private static final float MAX_DASH_SPEED = 700;
+    private static final float MAX_DASH_SPEED = 600;
     private float dashTime = 0;
 
     // broom
@@ -79,15 +80,16 @@ public class Player extends Entity {
         }
 
         // velocity
-        if (up) dy += ACCEL;
-        if (down) dy -= ACCEL;
-        dx += ACCEL;
-        if (left) sdx -= ACCEL;
-        if (right) sdx += ACCEL;
+        float maxAccel = dashTime > 0 ? DASH_ACCEL : ACCEL;
+        if (up) dy += maxAccel;
+        if (down) dy -= maxAccel;
+        dx += maxAccel;
+        if (left) sdx -= maxAccel;
+        if (right) sdx += maxAccel;
 
         // clamp max speed, dx clamps to dash
         float maxSpeed = dashTime > 0 ? MAX_DASH_SPEED : MAX_SPEED;
-        dx = MathUtils.clamp(dx, -maxSpeed, maxSpeed);
+        if (dx > maxSpeed) dx -= maxAccel;
         dy = MathUtils.clamp(dy, -MAX_SPEED, MAX_SPEED);
         sdx = MathUtils.clamp(sdx, -MAX_SPEED, MAX_SPEED);
 
