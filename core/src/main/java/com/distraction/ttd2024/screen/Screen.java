@@ -2,6 +2,7 @@ package com.distraction.ttd2024.screen;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 
@@ -13,6 +14,10 @@ public abstract class Screen {
     protected OrthographicCamera cam;
     protected OrthographicCamera uiCam;
 
+    protected boolean ignoreInput;
+
+    protected final TextureRegion pixel;
+
     protected Screen(Context context) {
         this.context = context;
         sb = context.sb;
@@ -21,6 +26,8 @@ public abstract class Screen {
         cam.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         uiCam = new OrthographicCamera();
         uiCam.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
+
+        pixel = context.getPixel();
     }
 
     public abstract void update(float dt);

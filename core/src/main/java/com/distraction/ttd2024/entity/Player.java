@@ -1,6 +1,7 @@
 package com.distraction.ttd2024.entity;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.ttd2024.Animation;
@@ -42,6 +43,7 @@ public class Player extends Entity {
     public int score;
 
     // 2x
+    private static final Color GLOW = Color.valueOf("FFF540");
     private static final float DOUBLE_TIME = 3f;
     public float doubleTime;
 
@@ -78,8 +80,6 @@ public class Player extends Entity {
         if (type == Collectable.Type.TWOX) doubleTime = DOUBLE_TIME;
         if (type.hasScore()) collectables.add(type);
         score += type.points * (doubleTime > 0 ? 2 : 1);
-        System.out.println("collected type " + type + ", points: " + (type.points * (doubleTime > 0 ? 2 : 1)));
-        System.out.println("score: " + score);
     }
 
     public List<Collectable.Type> hit() {
@@ -168,14 +168,13 @@ public class Player extends Entity {
 
     @Override
     public void render(SpriteBatch sb) {
+        sb.setColor(Color.WHITE);
         if (hitTime > 0) {
             if (hitTime % 0.2f < 0.1f) return;
-            sb.setColor(Color.WHITE);
-            hitAngle = 2 * MathUtils.PI * hitTime / HIT_INTERVAL;
+            hitAngle = -2 * MathUtils.PI * hitTime / HIT_INTERVAL;
             Utils.drawCentered(sb, image, x + sx, y + broomy, hitAngle);
             return;
         }
-        sb.setColor(Color.WHITE);
         setImage(animation.getImage());
         Utils.drawCentered(sb, image, x + sx, y + broomy);
     }

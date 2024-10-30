@@ -2,12 +2,10 @@ package com.distraction.ttd2024.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.Data;
 import com.distraction.ttd2024.UI;
-import com.distraction.ttd2024.Utils;
 import com.distraction.ttd2024.entity.Background;
 import com.distraction.ttd2024.entity.Collectable;
 import com.distraction.ttd2024.entity.Particle;
@@ -21,24 +19,18 @@ public class PlayScreen extends Screen {
     private static final float BUBBLE_INTERVAL = 0.1f;
     private static final float TOTAL_DISTANCE = 6000;
 
-    private float time;
-
     private final UI ui;
 
     private final Player player;
     private final Background bg;
 
-    private List<Collectable> collectables;
-    private List<Particle> particles;
-
-    private BitmapFont font = new BitmapFont();
+    private final List<Collectable> collectables;
+    private final List<Particle> particles;
 
     private float bubbleTime;
 
     public PlayScreen(Context context) {
         super(context);
-
-        ui = new UI(context, TOTAL_DISTANCE);
 
         player = new Player(context);
         player.x = 0;
@@ -52,6 +44,8 @@ public class PlayScreen extends Screen {
         }
 
         particles = new ArrayList<>();
+
+        ui = new UI(context, player, TOTAL_DISTANCE);
     }
 
     private void hit() {
@@ -76,15 +70,16 @@ public class PlayScreen extends Screen {
 
     @Override
     public void update(float dt) {
-        time += dt;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-            context.sm.replace(new PlayScreen(context));
+        if (!ignoreInput) {
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+                ignoreInput = true;
+                context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+            }
+            player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
+            player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+            player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+            player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         }
-        player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
-        player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         player.update(dt);
 
@@ -104,11 +99,12 @@ public class PlayScreen extends Screen {
                     hit();
                 }
             } else {
-                collided = collectable.overlaps(player.truex(), player.y, player.w, player.h);
+                collided = collectable.overlaps(player.truex(), player.truey(), player.w, player.h);
                 if (collided) player.collect(collectable.type);
             }
             if (collided || player.x - collectable.x > Constants.WIDTH) {
                 collectables.remove(i--);
+                ui.updateScore();
             }
 
         }
@@ -147,8 +143,6 @@ public class PlayScreen extends Screen {
         sb.setProjectionMatrix(uiCam.combined);
         ui.render(sb);
 
-//        font.draw(sb, "time: " + String.format("%.1f", 20f - time), 3, 15);
-        font.draw(sb, "score: " + player.score, 3, 15);
         sb.end();
     }
 }

@@ -3,10 +3,15 @@ package com.distraction.ttd2024;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.distraction.ttd2024.entity.FontEntity;
+import com.distraction.ttd2024.entity.Player;
 
 public class UI {
 
     public static final Color METER_COLOR = Color.valueOf("FF7A7D");
+
+    private final Player player;
 
     private final float totalDistance;
     public float currentDistance;
@@ -20,8 +25,12 @@ public class UI {
     private final float mh;
     private float md;
 
-    public UI(Context context, float totalDistance) {
+    private final FontEntity font;
+
+    public UI(Context context, Player player, float totalDistance) {
+        this.player = player;
         this.totalDistance = totalDistance;
+
         pixel = context.getPixel();
         meter = context.getImage("meter");
         meterHead = context.getImage("meterhead");
@@ -29,11 +38,21 @@ public class UI {
         mw = meter.getRegionWidth();
         mh = meter.getRegionHeight();
         mx = (Constants.WIDTH - mw) / 2f;
-        my = Constants.HEIGHT - 20f;
+        my = 4f;
+
+        font = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
+        font.setText("0");
+        font.center = false;
+        font.x = 5;
+        font.y = Constants.HEIGHT - 15;
+    }
+
+    public void updateScore() {
+        font.setText(player.score + "");
     }
 
     public void render(SpriteBatch sb) {
-        md = (mw - 2) * currentDistance / totalDistance;
+        md = (mw - 2) * MathUtils.clamp(currentDistance / totalDistance, 0, 1);
 
         sb.setColor(Color.WHITE);
         sb.draw(meter, mx, my);
@@ -41,6 +60,8 @@ public class UI {
         sb.draw(pixel, mx + 1, my + 1, md, mh - 2);
         sb.setColor(Color.WHITE);
         sb.draw(meterHead, mx + md, my - 2);
+
+        font.render(sb);
     }
 
 }

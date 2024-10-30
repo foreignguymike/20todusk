@@ -2,6 +2,7 @@ package com.distraction.ttd2024;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,6 +18,9 @@ public class Context {
     private static final String TILED_FILE = "tiled.tmx";
     private static final String ATLAS_FILE = "20todusk.atlas";
 
+    public static final String FONT_NAME_IMPACT16 = "fonts/impact16.fnt";
+    public static final String FONT_NAME_VCR20 = "fonts/vcr20.fnt";
+
     public AssetManager assets;
 
     public SpriteBatch sb;
@@ -26,6 +30,8 @@ public class Context {
         assets = new AssetManager();
         assets.load(ATLAS_FILE, TextureAtlas.class);
         assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        assets.load(FONT_NAME_IMPACT16, BitmapFont.class);
+        assets.load(FONT_NAME_VCR20, BitmapFont.class);
 //        assets.load(TILED_FILE, TiledMap.class);
         assets.finishLoading();
 
@@ -56,6 +62,10 @@ public class Context {
 
     public TextureRegion getPixel() {
         return assets.get(ATLAS_FILE, TextureAtlas.class).findRegion("pixel");
+    }
+
+    public BitmapFont getFont(String name) {
+        return assets.get(name, BitmapFont.class);
     }
 
     public void dispose() {
