@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.distraction.ttd2024.audio.AudioHandler;
 import com.distraction.ttd2024.screen.ScreenManager;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Context {
     public static final String FONT_NAME_VCR20 = "fonts/vcr20.fnt";
 
     public AssetManager assets;
+    public AudioHandler audio;
 
     public SpriteBatch sb;
     public ScreenManager sm;
@@ -32,11 +34,12 @@ public class Context {
         assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         assets.load(FONT_NAME_IMPACT16, BitmapFont.class);
         assets.load(FONT_NAME_VCR20, BitmapFont.class);
-//        assets.load(TILED_FILE, TiledMap.class);
         assets.finishLoading();
 
         sb = new SpriteBatch();
         sm = new ScreenManager();
+
+        audio = new AudioHandler();
     }
 
     public TiledMap getTiles() {

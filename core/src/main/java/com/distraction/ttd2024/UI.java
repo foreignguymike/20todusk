@@ -16,9 +16,9 @@ public class UI {
     private final float totalDistance;
     public float currentDistance;
 
-    private TextureRegion pixel;
-    private TextureRegion meter;
-    private TextureRegion meterHead;
+    private final TextureRegion pixel;
+    private final TextureRegion meter;
+    private final TextureRegion meterHead;
     private final float mx;
     private final float my;
     private final float mw;
@@ -26,6 +26,8 @@ public class UI {
     private float md;
 
     private final FontEntity font;
+
+    private final TextureRegion twox;
 
     public UI(Context context, Player player, float totalDistance) {
         this.player = player;
@@ -45,6 +47,8 @@ public class UI {
         font.center = false;
         font.x = 5;
         font.y = Constants.HEIGHT - 15;
+
+        twox = context.getImage("2x");
     }
 
     public void updateScore() {
@@ -62,6 +66,10 @@ public class UI {
         sb.draw(meterHead, mx + md, my - 2);
 
         font.render(sb);
+
+        if (player.doubleTime > 0) {
+            sb.draw(twox, 4, 2);
+        }
     }
 
 }

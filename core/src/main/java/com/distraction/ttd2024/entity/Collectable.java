@@ -9,15 +9,17 @@ import com.distraction.ttd2024.Utils;
 public class Collectable extends Entity {
 
     public enum Type {
-        SOUL(100),
-        BIGSOUL(400),
-        TWOX(0),
-        SPIKE(0);
+        SOUL(100, "soul"),
+        BIGSOUL(400, "soul"),
+        TWOX(0, "2x"),
+        SPIKE(0, "hit");
 
         public int points;
+        public String sound;
 
-        Type(int points) {
+        Type(int points, String sound) {
             this.points = points;
+            this.sound = sound;
         }
 
         boolean hasScore() {

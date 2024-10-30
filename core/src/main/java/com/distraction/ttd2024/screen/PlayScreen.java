@@ -28,6 +28,7 @@ public class PlayScreen extends Screen {
     private final List<Particle> particles;
 
     private float bubbleTime;
+    private float collectSoundTime;
 
     public PlayScreen(Context context) {
         super(context);
@@ -50,6 +51,7 @@ public class PlayScreen extends Screen {
 
     private void hit() {
         List<Collectable.Type> hitList = player.hit();
+        if (!hitList.isEmpty()) context.audio.playSound("hit");
         for (int i = 0; i < hitList.size(); i++) {
             Collectable.Type c = hitList.get(i);
             Particle.Type p;
@@ -100,7 +102,13 @@ public class PlayScreen extends Screen {
                 }
             } else {
                 collided = collectable.overlaps(player.truex(), player.truey(), player.w, player.h);
-                if (collided) player.collect(collectable.type);
+                if (collided) {
+                    player.collect(collectable.type);
+                    if (collectSoundTime > 0.05f) {
+                        collectSoundTime = 0;
+                        context.audio.playSoundCut(collectable.type.sound);
+                    }
+                }
             }
             if (collided || player.x - collectable.x > Constants.WIDTH) {
                 collectables.remove(i--);
@@ -122,6 +130,8 @@ public class PlayScreen extends Screen {
             bubbleTime -= BUBBLE_INTERVAL;
             particles.add(new Particle(context, Particle.Type.BUBBLE, player.truex() - 26, player.truey() - 12));
         }
+
+        collectSoundTime += dt;
     }
 
     @Override
