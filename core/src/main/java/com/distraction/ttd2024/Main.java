@@ -10,6 +10,9 @@ public class Main extends ApplicationAdapter {
 
     private Context context;
 
+    private static final float TICK = 1f / 60f;
+    private float accum;
+
     @Override
     public void create() {
         Data.load();
@@ -21,7 +24,11 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        context.sm.update(Gdx.graphics.getDeltaTime());
+        accum += Gdx.graphics.getDeltaTime();
+        while (accum > TICK) {
+            accum -= TICK;
+            context.sm.update(TICK);
+        }
         context.sm.render();
     }
 

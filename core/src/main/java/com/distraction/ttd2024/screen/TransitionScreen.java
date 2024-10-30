@@ -27,9 +27,9 @@ public class TransitionScreen extends Screen {
     @Override
     public void update(float dt) {
         time += dt;
+        nextScreen.ignoreInput = time < duration / 2;
         if (!next && time > duration / 2) {
             next = true;
-            nextScreen.ignoreInput = true;
             for (int i = 0; i < numPop; i++) context.sm.pop();
             context.sm.depth -= numPop - 1;
             context.sm.replace(nextScreen);
@@ -38,7 +38,6 @@ public class TransitionScreen extends Screen {
         if (time > duration) {
             context.sm.depth--;
             context.sm.pop();
-            nextScreen.ignoreInput = false;
         }
     }
 

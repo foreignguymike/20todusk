@@ -1,7 +1,6 @@
 package com.distraction.ttd2024.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.ttd2024.Animation;
@@ -15,15 +14,9 @@ import java.util.List;
 public class Player extends Entity {
 
     // moving
-    private static final float ACCEL = 6;
-    private static final float FRICTION = 2;
+    private static final float ACCEL = 1000;
+    private static final float FRICTION = 500;
     private static final float MAX_SPEED = 300;
-
-    // dashing
-    private static final float DASH_ACCEL = 12;
-    private static final float MAX_DASH_TIME = 3f;
-    private static final float MAX_DASH_SPEED = 600;
-    private float dashTime = 0;
 
     // broom
     private static final float BOUNCE_HEIGHT = 6f;
@@ -39,7 +32,7 @@ public class Player extends Entity {
     public boolean up, down, left, right;
 
     // collectables
-    private List<Collectable.Type> collectables;
+    private final List<Collectable.Type> collectables;
     public int score;
 
     // 2x
@@ -50,7 +43,6 @@ public class Player extends Entity {
     // hit
     private static final float HIT_INTERVAL = 1f;
     private float hitTime;
-    private float hitAngle;
 
     public Player(Context context) {
         super(context);
@@ -59,13 +51,6 @@ public class Player extends Entity {
         animation = new Animation(context.getImages("witch"), 0.2f);
 
         sx = -100;
-    }
-
-    /**
-     * Dunno if I want dash. It makes balancing difficult.
-     */
-    public void dash() {
-        dashTime = MAX_DASH_TIME;
     }
 
     public float truex() {
@@ -101,42 +86,34 @@ public class Player extends Entity {
     @Override
     public void update(float dt) {
         animation.update(dt);
-        animation.interval = MathUtils.map(0, MAX_DASH_SPEED, 0.2f, 0.04f, Math.abs(dx));
 
+        dx = MAX_SPEED;
+
+        float friction = FRICTION * dt;
         // friction
         if (dy > 0) {
-            dy -= FRICTION;
+            dy -= friction;
             if (dy < 0) dy = 0;
         } else if (dy < 0) {
-            dy += FRICTION;
+            dy += friction;
             if (dy > 0) dy = 0;
         }
-        if (dx > 0) {
-            dx -= FRICTION;
-            if (dx < 0) dx = 0;
-        } else if (dx < 0) {
-            dx += FRICTION;
-            if (dx > 0) dx = 0;
-        }
         if (sdx > 0) {
-            sdx -= FRICTION;
+            sdx -= friction;
             if (sdx < 0) sdx = 0;
         } else if (sdx < 0) {
-            sdx += FRICTION;
+            sdx += friction;
             if (sdx > 0) sdx = 0;
         }
 
         // velocity
-        float maxAccel = dashTime > 0 ? DASH_ACCEL : ACCEL;
+        float maxAccel = ACCEL * dt;
         if (up) dy += maxAccel;
         if (down) dy -= maxAccel;
-        dx += maxAccel;
         if (left) sdx -= maxAccel;
         if (right) sdx += maxAccel;
 
         // clamp max speed, dx clamps to dash
-        float maxSpeed = dashTime > 0 ? MAX_DASH_SPEED : MAX_SPEED;
-        if (dx > maxSpeed) dx -= maxAccel;
         dy = MathUtils.clamp(dy, -MAX_SPEED, MAX_SPEED);
         sdx = MathUtils.clamp(sdx, -MAX_SPEED, MAX_SPEED);
 
@@ -148,12 +125,6 @@ public class Player extends Entity {
         // clamp position
         y = Utils.clampCallback(y, h / 2 + 15, Constants.HEIGHT - h / 2f, () -> dy = 0);
         sx = Utils.clampCallback(sx, (w - Constants.WIDTH) / 2f, (Constants.WIDTH - w) / 2f, () -> sdx = 0);
-
-        // update dash
-        if (dashTime > 0) {
-            dashTime -= dt;
-            if (dashTime < 0) dashTime = 0;
-        }
 
         // broom bounce
         broomTime += dt;
@@ -171,7 +142,7 @@ public class Player extends Entity {
         sb.setColor(Color.WHITE);
         if (hitTime > 0) {
             if (hitTime % 0.2f < 0.1f) return;
-            hitAngle = -2 * MathUtils.PI * hitTime / HIT_INTERVAL;
+            float hitAngle = -2 * MathUtils.PI * hitTime / HIT_INTERVAL;
             Utils.drawCentered(sb, image, x + sx, y + broomy, hitAngle);
             return;
         }

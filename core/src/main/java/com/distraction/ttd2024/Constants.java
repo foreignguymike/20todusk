@@ -12,4 +12,6 @@ public class Constants {
 
     public static final boolean FULLSCREEN = true;
 
+    public static final int FPS = 60;
+
 }
