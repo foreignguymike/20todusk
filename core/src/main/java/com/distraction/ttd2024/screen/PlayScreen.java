@@ -195,6 +195,9 @@ public class PlayScreen extends Screen {
         // done
         if (!ignoreInput && player.x >= TOTAL_DISTANCE) {
             ignoreInput = true;
+            if (!isReplay) {
+                context.data.set(null, player.score, save);
+            }
             context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, isReplay ? 0 : player.score, save)));
             System.out.println(save);
         }

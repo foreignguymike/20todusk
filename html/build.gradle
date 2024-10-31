@@ -31,15 +31,11 @@ gwt {
 
 dependencies {
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-  implementation "com.github.tommyettinger:anim8-gdx:$anim8Version:sources"
   implementation "com.github.tommyettinger:gdx-backend-gwt:1.1210.1"
   implementation "com.github.tommyettinger:gdx-backend-gwt:1.1210.1:sources"
-  implementation "com.github.tommyettinger:regexodus:$regExodusVersion:sources"
   implementation "com.google.jsinterop:jsinterop-annotations:2.0.2:sources"
-  implementation "com.squidpony:squidlib-util:$squidlibUtilVersion:sources"
-  implementation "com.squidpony:squidlib:$squidlibVersion:sources"
   implementation project(':core')
-
+  implementation "de.golfgl.gdxgamesvcs:gdx-gamesvcs-core:1.0.0:sources"
 }
 
 import org.akhikhl.gretty.AppBeforeIntegrationTestTask

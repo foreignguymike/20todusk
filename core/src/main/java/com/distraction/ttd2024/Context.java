@@ -30,6 +30,8 @@ public class Context {
     public SpriteBatch sb;
     public ScreenManager sm;
 
+    public PlayerData data = new PlayerData();
+
     public static final int MAX_SCORES = 8;
     public GameJoltClient client;
     public boolean leaderboardsRequested;

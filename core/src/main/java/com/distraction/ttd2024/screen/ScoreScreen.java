@@ -310,7 +310,7 @@ public class ScoreScreen extends Screen {
 
         if (context.leaderboardsInitialized) {
             if (score > 0) {
-                if (context.entries.size() < Context.MAX_SCORES || Integer.parseInt(context.entries.getLast().getFormattedValue()) < score) {
+                if (context.entries.size() < Context.MAX_SCORES || Integer.parseInt(context.entries.get(context.entries.size() - 1).getFormattedValue()) < score) {
                     enterNameFont.render(sb);
                     nameFont.render(sb);
                 }

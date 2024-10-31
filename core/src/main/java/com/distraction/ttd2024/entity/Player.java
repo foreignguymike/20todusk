@@ -36,7 +36,6 @@ public class Player extends Entity {
     public int score;
 
     // 2x
-    private static final Color GLOW = Color.valueOf("FFF540");
     private static final float DOUBLE_TIME = 3f;
     public float doubleTime;
 
@@ -73,10 +72,10 @@ public class Player extends Entity {
         if (hitTime > 0) return remove;
         hitTime = HIT_INTERVAL;
 
-        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
-        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
-        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
-        if (!collectables.isEmpty()) remove.add(collectables.removeLast());
+        if (!collectables.isEmpty()) remove.add(collectables.remove(collectables.size() - 1));
+        if (!collectables.isEmpty()) remove.add(collectables.remove(collectables.size() - 1));
+        if (!collectables.isEmpty()) remove.add(collectables.remove(collectables.size() - 1));
+        if (!collectables.isEmpty()) remove.add(collectables.remove(collectables.size() - 1));
         for (Collectable.Type type : remove) {
             score -= type.points;
         }
