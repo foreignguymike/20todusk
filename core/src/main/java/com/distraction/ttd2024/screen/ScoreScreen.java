@@ -54,6 +54,7 @@ import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.entity.FontEntity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.golfgl.gdxgamesvcs.leaderboard.ILeaderBoardEntry;
@@ -115,12 +116,14 @@ public class ScoreScreen extends Screen {
 
     private String name = "";
     private final int score;
+    private final List<Integer> save;
 
     private float time;
 
-    protected ScoreScreen(Context context, int score) {
+    protected ScoreScreen(Context context, int score, List<Integer> save) {
         super(context);
         this.score = score;
+        this.save = save;
 
         pixel = context.getPixel();
 
@@ -236,10 +239,11 @@ public class ScoreScreen extends Screen {
     }
 
     private void submit() {
+        System.out.println("test submit: " + name + ", " + score + ", " + serializeSave(save));
         if (!valid()) return;
         if (submitted) return;
         loading = true;
-        context.submitScore(name, score, new Net.HttpResponseListener() {
+        context.submitScore(name, score, serializeSave(save), new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 String res = httpResponse.getResultAsString();
@@ -265,6 +269,17 @@ public class ScoreScreen extends Screen {
                 failed(null);
             }
         });
+    }
+
+    private String serializeSave(List<Integer> save) {
+        StringBuilder ret = new StringBuilder();
+        if (!save.isEmpty()) {
+            ret = new StringBuilder(save.get(0).toString());
+        }
+        for (int i = 1; i < save.size(); i++) {
+            ret.append(",").append(save.get(i).toString());
+        }
+        return ret.toString();
     }
 
     private boolean valid() {

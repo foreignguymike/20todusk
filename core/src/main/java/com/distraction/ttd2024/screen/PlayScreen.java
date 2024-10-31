@@ -92,16 +92,16 @@ public class PlayScreen extends Screen {
 
     private void saveInput(int tick, int input, boolean down) {
         save.add(tick);
-        save.add(input);
-        save.add(down ? 1 : 0);
+        save.add(input * 2 + (down ? 1 : 0));
         downs[input] = down;
     }
 
     private void checkReplay(int tick) {
         if (replayIndex >= replay.length) return;
         while (replay[replayIndex] == tick) {
-            downs[replay[replayIndex + 1]] = replay[replayIndex + 2] == 1;
-            replayIndex += 3;
+            int code = replay[replayIndex + 1];
+            downs[code / 2] = code % 2 == 1;
+            replayIndex += 2;
             if (replayIndex >= replay.length) break;
         }
     }
@@ -117,7 +117,7 @@ public class PlayScreen extends Screen {
             }
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 ignoreInput = true;
-                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score)));
+                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score, save)));
             }
 
             boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -195,7 +195,7 @@ public class PlayScreen extends Screen {
         // done
         if (!ignoreInput && player.x >= TOTAL_DISTANCE) {
             ignoreInput = true;
-            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, isReplay ? 0 : player.score)));
+            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, isReplay ? 0 : player.score, save)));
             System.out.println(save);
         }
     }

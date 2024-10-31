@@ -87,9 +87,9 @@ public class Context {
         });
     }
 
-    public void submitScore(String name, int score, Net.HttpResponseListener listener) {
+    public void submitScore(String name, int score, String metadata, Net.HttpResponseListener listener) {
         client.setGuestName(name);
-        client.submitToLeaderboard("", score, "", 10000, listener);
+        client.submitToLeaderboard("", score, metadata, 10000, listener);
     }
 
     public interface SimpleCallback {
