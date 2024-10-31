@@ -53,6 +53,9 @@ public class PlayScreen extends Screen {
         replayFont.setText("REPLAY");
         replayFont.x = Constants.WIDTH / 2f;
         replayFont.y = Constants.HEIGHT - 15;
+
+        backButton.x = Constants.WIDTH - 14;
+        backButton.y = Constants.HEIGHT - 15;
     }
 
     public PlayScreen(Context context) {
@@ -123,12 +126,20 @@ public class PlayScreen extends Screen {
         if (!ignoreInput) {
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 ignoreInput = true;
-                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score, save)));
+                context.data.set("", player.score, save);
+                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
             }
 
             if (Gdx.input.justTouched()) {
                 unproject();
-                if (restartButton.contains(m.x, m.y)) {
+                if (backButton.contains(m.x, m.y)) {
+                    if (isReplay) {
+                        context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
+                    } else {
+                        context.sm.push(new CheckeredTransitionScreen(context, new TitleScreen(context)));
+                    }
+                }
+                if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
                     context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
@@ -213,8 +224,10 @@ public class PlayScreen extends Screen {
             if (!isReplay) {
                 context.data.set(null, player.score, save);
             }
-            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, isReplay ? 0 : player.score, save)));
-            System.out.println(save);
+            if (!isReplay) {
+                context.data.set("", player.score, save);
+            }
+            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
         }
     }
 
@@ -237,7 +250,7 @@ public class PlayScreen extends Screen {
         sb.setProjectionMatrix(uiCam.combined);
         ui.render(sb);
         backButton.render(sb);
-        restartButton.render(sb);
+        if (!isReplay) restartButton.render(sb);
 
         if (isReplay) {
             replayFont.render(sb);

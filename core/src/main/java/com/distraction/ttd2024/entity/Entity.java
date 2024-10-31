@@ -1,5 +1,6 @@
 package com.distraction.ttd2024.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Animation;
@@ -56,6 +57,7 @@ public class Entity {
     }
 
     public void render(SpriteBatch sb) {
+        sb.setColor(Color.WHITE);
         Utils.drawCentered(sb, image, x, y);
     }
 

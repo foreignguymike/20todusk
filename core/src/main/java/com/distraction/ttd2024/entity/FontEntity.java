@@ -36,7 +36,6 @@ public class FontEntity extends Entity {
 
     @Override
     public void render(SpriteBatch sb) {
-        sb.setColor(Color.WHITE);
         if (center) {
             font.draw(sb, glyphLayout, x - glyphLayout.width / 2f, y + glyphLayout.height / 2f);
         } else {

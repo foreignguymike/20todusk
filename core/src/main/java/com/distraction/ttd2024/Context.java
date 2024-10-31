@@ -21,8 +21,8 @@ import de.golfgl.gdxgamesvcs.leaderboard.ILeaderBoardEntry;
 public class Context {
 
     private static final String ATLAS_FILE = "20todusk.atlas";
-    public static final String FONT_NAME_IMPACT16 = "fonts/impact16.fnt";
     public static final String FONT_NAME_VCR20 = "fonts/vcr20.fnt";
+    public static final String FONT_NAME_M5X716 = "fonts/m5x716.fnt";
 
     public AssetManager assets;
     public AudioHandler audio;
@@ -42,7 +42,7 @@ public class Context {
         assets = new AssetManager();
         assets.load(ATLAS_FILE, TextureAtlas.class);
         assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assets.load(FONT_NAME_IMPACT16, BitmapFont.class);
+        assets.load(FONT_NAME_M5X716, BitmapFont.class);
         assets.load(FONT_NAME_VCR20, BitmapFont.class);
         assets.finishLoading();
 

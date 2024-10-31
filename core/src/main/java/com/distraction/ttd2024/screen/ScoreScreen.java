@@ -51,6 +51,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
+import com.distraction.ttd2024.entity.Entity;
 import com.distraction.ttd2024.entity.FontEntity;
 
 import java.util.HashMap;
@@ -110,20 +111,17 @@ public class ScoreScreen extends Screen {
     private final FontEntity enterNameFont;
     private final FontEntity nameFont;
 
-    private boolean submitted = false;
+    private final int[][] replayData;
+    private final Entity[] replayButtons;
+
     private boolean shift = false;
     private boolean loading = false;
 
-    private String name = "";
-    private final int score;
-    private final List<Integer> save;
 
     private float time;
 
-    protected ScoreScreen(Context context, int score, List<Integer> save) {
+    protected ScoreScreen(Context context) {
         super(context);
-        this.score = score;
-        this.save = save;
 
         pixel = context.getPixel();
 
@@ -135,38 +133,53 @@ public class ScoreScreen extends Screen {
         leaderboardFont.y = Constants.HEIGHT - 15f;
 
         scoreFont = new FontEntity(context, impactFont);
-        scoreFont.setText("Score:" + score);
+        scoreFont.setText("Score:" + context.data.score);
         scoreFont.center = false;
         scoreFont.x = 165f;
         scoreFont.y = Constants.HEIGHT - 15f;
 
+        BitmapFont m5Font = context.getFont(Context.FONT_NAME_M5X716);
         scoreFonts = new FontEntity[Context.MAX_SCORES][3];
         for (int row = 0; row < scoreFonts.length; row++) {
-            scoreFonts[row][0] = new FontEntity(context, impactFont);
-            scoreFonts[row][1] = new FontEntity(context, impactFont);
-            scoreFonts[row][2] = new FontEntity(context, impactFont);
-
+            scoreFonts[row][0] = new FontEntity(context, m5Font);
             scoreFonts[row][0].center = true;
+            scoreFonts[row][0].x = 40;
+            scoreFonts[row][0].y = Constants.HEIGHT - 36 - row * 16;
+            scoreFonts[row][0].setText((row + 1) + "");
+        }
+        for (int row = 0; row < scoreFonts.length; row++) {
+            scoreFonts[row][1] = new FontEntity(context, m5Font);
+            scoreFonts[row][2] = new FontEntity(context, m5Font);
+
             scoreFonts[row][1].center = false;
             scoreFonts[row][2].center = false;
 
-            scoreFonts[row][0].x = 40;
-            scoreFonts[row][0].y = Constants.HEIGHT - 36 - row * 16;
             scoreFonts[row][1].x = 70;
             scoreFonts[row][1].y = scoreFonts[row][0].y;
-            scoreFonts[row][2].x = 240;
+            scoreFonts[row][2].x = 180;
             scoreFonts[row][2].y = scoreFonts[row][0].y;
 
-            scoreFonts[row][0].setText((row + 1) + "");
-            scoreFonts[row][1].setText("-");
-            scoreFonts[row][2].setText("-");
+            scoreFonts[row][1].setText("");
+            scoreFonts[row][2].setText("");
         }
+
+        replayData = new int[Context.MAX_SCORES][];
+        replayButtons = new Entity[Context.MAX_SCORES];
+        for (int i = 0; i < replayButtons.length; i++) {
+            Entity button = new Entity(context);
+            button.setImage(context.getImage("replay"));
+            button.x = 280;
+            button.y = Constants.HEIGHT - 36 - i * 16;
+            replayButtons[i] = button;
+        }
+
         enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
         enterNameFont.setText("Name:");
         enterNameFont.center = false;
         enterNameFont.x = 20;
         enterNameFont.y = 13;
         nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
+        nameFont.setText(context.data.name);
         nameFont.center = false;
         nameFont.x = 100;
         nameFont.y = 13;
@@ -190,14 +203,14 @@ public class ScoreScreen extends Screen {
                 }
                 String letter = INPUT_MAP.get(keycode);
                 if (letter != null) {
-                    if (name.length() < 10) {
-                        if (shift) name += letter.toUpperCase();
-                        else name += letter;
+                    if (context.data.name.length() < 15) {
+                        if (shift) context.data.name += letter.toUpperCase();
+                        else context.data.name += letter;
                     }
                 }
                 if (keycode == BACKSPACE) {
-                    if (!name.isEmpty()) {
-                        name = name.substring(0, name.length() - 1);
+                    if (!context.data.name.isEmpty()) {
+                        context.data.name = context.data.name.substring(0, context.data.name.length() - 1);
                     }
                 }
                 if (keycode == ENTER) {
@@ -208,7 +221,7 @@ public class ScoreScreen extends Screen {
                     Gdx.input.setInputProcessor(null);
                     context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
                 }
-                nameFont.setText(name);
+                nameFont.setText(context.data.name);
                 return true;
             }
         });
@@ -231,26 +244,31 @@ public class ScoreScreen extends Screen {
                 ILeaderBoardEntry entry = context.entries.get(i);
                 scoreFonts[i][1].setText(entry.getUserDisplayName());
                 scoreFonts[i][2].setText(entry.getFormattedValue());
+
+                String[] split = entry.getScoreTag().split(",");
+                replayData[i] = new int[split.length];
+                for (int j = 0; j < split.length; j++) {
+                    replayData[i][j] = Integer.parseInt(split[j]);
+                }
             } else {
-                scoreFonts[i][1].setText("-");
-                scoreFonts[i][2].setText("-");
+                scoreFonts[i][1].setText("");
+                scoreFonts[i][2].setText("");
             }
         }
     }
 
     private void submit() {
-        System.out.println("test submit: " + name + ", " + score + ", " + serializeSave(save));
         if (!valid()) return;
-        if (submitted) return;
+        if (context.data.submitted) return;
         loading = true;
-        context.submitScore(name, score, serializeSave(save), new Net.HttpResponseListener() {
+        context.submitScore(context.data.name, context.data.score, serializeSave(context.data.save), new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 String res = httpResponse.getResultAsString();
                 // throwing an exception with SubmitScoreResponse here for some reason
                 // just doing a sus true check instead
                 if (res.contains("true")) {
-                    submitted = true;
+                    context.data.submitted = true;
                     context.fetchLeaderboard(() -> updateLeaderboards());
                 } else {
                     failed(null);
@@ -283,12 +301,27 @@ public class ScoreScreen extends Screen {
     }
 
     private boolean valid() {
-        return !name.isEmpty() && context.leaderboardsInitialized;
+        return !context.data.name.isEmpty() && context.leaderboardsInitialized;
     }
 
     @Override
     public void update(float dt) {
         time += dt;
+
+        if (!ignoreInput) {
+            if (Gdx.input.justTouched()) {
+                unproject();
+                for (int i = 0; i < replayButtons.length; i++) {
+                    if (replayButtons[i].contains(m.x, m.y)) {
+                        if (replayData[i] != null) {
+                            ignoreInput = true;
+                            context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context, replayData[i])));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -302,15 +335,21 @@ public class ScoreScreen extends Screen {
         sb.setColor(Color.WHITE);
         leaderboardFont.render(sb);
         scoreFont.render(sb);
-        for (FontEntity[] scoreFont : scoreFonts) {
-            for (int i = 0; i < scoreFonts[0].length; i++) {
-                scoreFont[i].render(sb);
+        for (int i = 0; i < scoreFonts.length; i++) {
+            for (int j = 0; j < scoreFonts[0].length; j++) {
+                scoreFonts[i][j].render(sb);
+            }
+        }
+        for (int i = 0; i < replayData.length; i++) {
+            if (replayData[i] != null) {
+                replayButtons[i].render(sb);
             }
         }
 
         if (context.leaderboardsInitialized) {
-            if (score > 0) {
-                if (context.entries.size() < Context.MAX_SCORES || Integer.parseInt(context.entries.get(context.entries.size() - 1).getFormattedValue()) < score) {
+            if (context.data.score > 0) {
+                if (context.entries.size() < Context.MAX_SCORES
+                    || Integer.parseInt(context.entries.get(context.entries.size() - 1).getFormattedValue()) < context.data.score) {
                     enterNameFont.render(sb);
                     nameFont.render(sb);
                 }
