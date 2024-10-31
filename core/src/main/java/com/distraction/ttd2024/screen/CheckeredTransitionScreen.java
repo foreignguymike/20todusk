@@ -20,7 +20,7 @@ class CheckeredTransitionScreen extends TransitionScreen {
     public void render() {
         sb.begin();
         sb.setColor(Color.BLACK);
-        sb.setProjectionMatrix(uiCam.combined);
+        sb.setProjectionMatrix(cam.combined);
         float squareSize = Constants.WIDTH / 16f;
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 16; col++) {

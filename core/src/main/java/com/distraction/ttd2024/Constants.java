@@ -14,4 +14,15 @@ public class Constants {
 
     public static final int FPS = 60;
 
+    public static String APP_ID = "";
+    public static String API_KEY = "";
+    public static int LEADERBOARD_ID = 0;
+
+    // not for you
+    static {
+//        APP_ID = ApiConstants.APP_ID;
+//        API_KEY = ApiConstants.API_KEY;
+//        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
+    }
+
 }

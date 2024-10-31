@@ -3,6 +3,7 @@ package com.distraction.ttd2024;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.distraction.ttd2024.gj.GameJoltClient;
 import com.distraction.ttd2024.screen.PlayScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -18,6 +19,12 @@ public class Main extends ApplicationAdapter {
         Data.load();
 
         context = new Context();
+
+        GameJoltClient client = new GameJoltClient();
+        client.setGjScoreTableMapper(key -> Constants.LEADERBOARD_ID);
+        client.initialize(Constants.APP_ID, Constants.API_KEY);
+        context.client = client;
+
         context.sm.push(new PlayScreen(context));
     }
 

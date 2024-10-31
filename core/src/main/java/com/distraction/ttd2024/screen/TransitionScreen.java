@@ -27,7 +27,7 @@ public class TransitionScreen extends Screen {
     @Override
     public void update(float dt) {
         time += dt;
-        nextScreen.ignoreInput = time < duration / 2;
+        nextScreen.ignoreInput = time < duration;
         if (!next && time > duration / 2) {
             next = true;
             for (int i = 0; i < numPop; i++) context.sm.pop();
@@ -47,7 +47,7 @@ public class TransitionScreen extends Screen {
         float perc = interp < 0.5f ? interp * 2 : 1f - (time - duration / 2) / duration * 2;
         Color c = sb.getColor();
         sb.setColor(Color.BLACK);
-        sb.setProjectionMatrix(uiCam.combined);
+        sb.setProjectionMatrix(cam.combined);
         sb.begin();
         sb.draw(pixel, 0, Constants.HEIGHT, Constants.WIDTH, -perc * Constants.HEIGHT / 2);
         sb.draw(pixel, 0, 0, Constants.WIDTH, perc * Constants.HEIGHT / 2);

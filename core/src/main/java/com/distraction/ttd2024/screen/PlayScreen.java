@@ -73,7 +73,7 @@ public class PlayScreen extends Screen {
     @Override
     public void update(float dt) {
         if (!ignoreInput) {
-            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
                 ignoreInput = true;
                 context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
             }
@@ -92,29 +92,28 @@ public class PlayScreen extends Screen {
 
         bg.update(dt);
 
-        for (int i = 0; i < collectables.size(); i++) {
-            Collectable collectable = collectables.get(i);
-            boolean collided;
-            if (collectable.type == Collectable.Type.SPIKE) {
-                collided = collectable.contains(player.truex(), player.truey());
-                if (collided) {
-                    hit();
-                }
-            } else {
-                collided = collectable.overlaps(player.truex(), player.truey(), player.w, player.h);
-                if (collided) {
-                    player.collect(collectable.type);
-                    if (collectSoundTime > 0.05f) {
-                        collectSoundTime = 0;
-                        context.audio.playSoundCut(collectable.type.sound);
+        if (!ignoreInput) {
+            for (int i = 0; i < collectables.size(); i++) {
+                Collectable collectable = collectables.get(i);
+                boolean collided;
+                if (collectable.type == Collectable.Type.SPIKE) {
+                    collided = collectable.contains(player.truex(), player.truey());
+                    if (collided) hit();
+                } else {
+                    collided = collectable.overlaps(player.truex(), player.truey(), player.w, player.h);
+                    if (collided) {
+                        player.collect(collectable.type);
+                        if (collectSoundTime > 0.05f) {
+                            collectSoundTime = 0;
+                            context.audio.playSoundCut(collectable.type.sound);
+                        }
                     }
                 }
+                if (collided || player.x - collectable.x > Constants.WIDTH) {
+                    collectables.remove(i--);
+                    ui.updateScore();
+                }
             }
-            if (collided || player.x - collectable.x > Constants.WIDTH) {
-                collectables.remove(i--);
-                ui.updateScore();
-            }
-
         }
 
         for (int i = 0; i < particles.size(); i++) {
@@ -132,6 +131,12 @@ public class PlayScreen extends Screen {
         }
 
         collectSoundTime += dt;
+
+        // done
+        if (!ignoreInput && player.x >= TOTAL_DISTANCE) {
+            ignoreInput = true;
+            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score)));
+        }
     }
 
     @Override

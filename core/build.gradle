@@ -7,6 +7,7 @@ dependencies {
   api "com.github.tommyettinger:regexodus:$regExodusVersion"
   api "com.squidpony:squidlib-util:$squidlibUtilVersion"
   api "com.squidpony:squidlib:$squidlibVersion"
+  api "de.golfgl.gdxgamesvcs:gdx-gamesvcs-core:1.1.0"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

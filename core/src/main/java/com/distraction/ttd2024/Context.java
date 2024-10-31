@@ -1,5 +1,6 @@
 package com.distraction.ttd2024;
 
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,10 +10,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.distraction.ttd2024.audio.AudioHandler;
+import com.distraction.ttd2024.gj.GameJoltClient;
 import com.distraction.ttd2024.screen.ScreenManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.golfgl.gdxgamesvcs.leaderboard.ILeaderBoardEntry;
 
 public class Context {
 
@@ -27,6 +31,11 @@ public class Context {
 
     public SpriteBatch sb;
     public ScreenManager sm;
+
+    public GameJoltClient client;
+    public boolean leaderboardsRequested;
+    public boolean leaderboardsInitialized;
+    public List<ILeaderBoardEntry> entries = new ArrayList<>();
 
     public Context() {
         assets = new AssetManager();
@@ -69,6 +78,27 @@ public class Context {
 
     public BitmapFont getFont(String name) {
         return assets.get(name, BitmapFont.class);
+    }
+
+    public void fetchLeaderboard(SimpleCallback callback) {
+        entries.clear();
+        if (Constants.LEADERBOARD_ID == 0) return;
+        client.fetchLeaderboardEntries("", 10, false, leaderBoard -> {
+            entries.clear();
+            for (int i = 0; i < leaderBoard.size; i++) {
+                entries.add(leaderBoard.get(i));
+            }
+            callback.callback();
+        });
+    }
+
+    public void submitScore(String name, int score, Net.HttpResponseListener listener) {
+        client.setGuestName(name);
+        client.submitToLeaderboard("", score, "", 10000, listener);
+    }
+
+    public interface SimpleCallback {
+        void callback();
     }
 
     public void dispose() {
