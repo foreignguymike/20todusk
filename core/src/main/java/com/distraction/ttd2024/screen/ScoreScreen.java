@@ -99,52 +99,12 @@ public class ScoreScreen extends Screen {
         put(Z, "z");
     }};
 
-    private final InputAdapter adapter = new InputAdapter() {
-        @Override
-        public boolean keyUp(int keycode) {
-            if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
-                shift = false;
-            }
-            return true;
-        }
-
-        @Override
-        public boolean keyDown(int keycode) {
-            if (ignoreInput) return true;
-            if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
-                shift = true;
-            }
-            String letter = INPUT_MAP.get(keycode);
-            if (letter != null) {
-                if (name.length() < 10) {
-                    if (shift) name += letter.toUpperCase();
-                    else name += letter;
-                }
-            }
-            if (keycode == BACKSPACE) {
-                if (!name.isEmpty()) {
-                    name = name.substring(0, name.length() - 1);
-                }
-            }
-            if (keycode == ENTER) {
-                submit();
-            }
-            if (keycode == ESCAPE) {
-                ignoreInput = true;
-                Gdx.input.setInputProcessor(null);
-                context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
-            }
-            nameFont.setText(name);
-            return true;
-        }
-    };
-
     private static final Color BG_COLOR = Color.valueOf("392946");
-    private static final int MAX_SCORES = 8;
 
     private final TextureRegion pixel;
 
     private final FontEntity leaderboardFont;
+    private final FontEntity scoreFont;
     private final FontEntity[][] scoreFonts;
     private final FontEntity enterNameFont;
     private final FontEntity nameFont;
@@ -167,10 +127,17 @@ public class ScoreScreen extends Screen {
         BitmapFont impactFont = context.getFont(Context.FONT_NAME_VCR20);
         leaderboardFont = new FontEntity(context, impactFont);
         leaderboardFont.setText("LEADERBOARD");
-        leaderboardFont.x = Constants.WIDTH / 2f;
+        leaderboardFont.center = false;
+        leaderboardFont.x = 15f;
         leaderboardFont.y = Constants.HEIGHT - 15f;
 
-        scoreFonts = new FontEntity[MAX_SCORES][3];
+        scoreFont = new FontEntity(context, impactFont);
+        scoreFont.setText("Score:" + score);
+        scoreFont.center = false;
+        scoreFont.x = 165f;
+        scoreFont.y = Constants.HEIGHT - 15f;
+
+        scoreFonts = new FontEntity[Context.MAX_SCORES][3];
         for (int row = 0; row < scoreFonts.length; row++) {
             scoreFonts[row][0] = new FontEntity(context, impactFont);
             scoreFonts[row][1] = new FontEntity(context, impactFont);
@@ -203,7 +170,45 @@ public class ScoreScreen extends Screen {
 
         requestLeaderboards();
 
-        Gdx.input.setInputProcessor(adapter);
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean keyUp(int keycode) {
+                if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
+                    shift = false;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean keyDown(int keycode) {
+                if (ignoreInput) return true;
+                if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
+                    shift = true;
+                }
+                String letter = INPUT_MAP.get(keycode);
+                if (letter != null) {
+                    if (name.length() < 10) {
+                        if (shift) name += letter.toUpperCase();
+                        else name += letter;
+                    }
+                }
+                if (keycode == BACKSPACE) {
+                    if (!name.isEmpty()) {
+                        name = name.substring(0, name.length() - 1);
+                    }
+                }
+                if (keycode == ENTER) {
+                    submit();
+                }
+                if (keycode == ESCAPE) {
+                    ignoreInput = true;
+                    Gdx.input.setInputProcessor(null);
+                    context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                }
+                nameFont.setText(name);
+                return true;
+            }
+        });
     }
 
     private void requestLeaderboards() {
@@ -218,7 +223,7 @@ public class ScoreScreen extends Screen {
     }
 
     private void updateLeaderboards() {
-        for (int i = 0; i < MAX_SCORES; i++) {
+        for (int i = 0; i < Context.MAX_SCORES; i++) {
             if (i < context.entries.size()) {
                 ILeaderBoardEntry entry = context.entries.get(i);
                 scoreFonts[i][1].setText(entry.getUserDisplayName());
@@ -263,7 +268,7 @@ public class ScoreScreen extends Screen {
     }
 
     private boolean valid() {
-        return !name.isEmpty();
+        return !name.isEmpty() && context.leaderboardsInitialized;
     }
 
     @Override
@@ -281,6 +286,7 @@ public class ScoreScreen extends Screen {
 
         sb.setColor(Color.WHITE);
         leaderboardFont.render(sb);
+        scoreFont.render(sb);
         for (FontEntity[] scoreFont : scoreFonts) {
             for (int i = 0; i < scoreFonts[0].length; i++) {
                 scoreFont[i].render(sb);
@@ -289,7 +295,7 @@ public class ScoreScreen extends Screen {
 
         if (context.leaderboardsInitialized) {
             if (score > 0) {
-                if (context.entries.size() < MAX_SCORES || Integer.parseInt(context.entries.getLast().getFormattedValue()) < score) {
+                if (context.entries.size() < Context.MAX_SCORES || Integer.parseInt(context.entries.getLast().getFormattedValue()) < score) {
                     enterNameFont.render(sb);
                     nameFont.render(sb);
                 }

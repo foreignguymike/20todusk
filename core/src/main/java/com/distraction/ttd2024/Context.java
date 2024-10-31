@@ -20,9 +20,7 @@ import de.golfgl.gdxgamesvcs.leaderboard.ILeaderBoardEntry;
 
 public class Context {
 
-    private static final String TILED_FILE = "tiled.tmx";
     private static final String ATLAS_FILE = "20todusk.atlas";
-
     public static final String FONT_NAME_IMPACT16 = "fonts/impact16.fnt";
     public static final String FONT_NAME_VCR20 = "fonts/vcr20.fnt";
 
@@ -32,6 +30,7 @@ public class Context {
     public SpriteBatch sb;
     public ScreenManager sm;
 
+    public static final int MAX_SCORES = 8;
     public GameJoltClient client;
     public boolean leaderboardsRequested;
     public boolean leaderboardsInitialized;
@@ -49,10 +48,6 @@ public class Context {
         sm = new ScreenManager();
 
         audio = new AudioHandler();
-    }
-
-    public TiledMap getTiles() {
-        return assets.get(TILED_FILE);
     }
 
     public TextureRegion getImage(String key) {
@@ -83,7 +78,7 @@ public class Context {
     public void fetchLeaderboard(SimpleCallback callback) {
         entries.clear();
         if (Constants.LEADERBOARD_ID == 0) return;
-        client.fetchLeaderboardEntries("", 10, false, leaderBoard -> {
+        client.fetchLeaderboardEntries("", MAX_SCORES, false, leaderBoard -> {
             entries.clear();
             for (int i = 0; i < leaderBoard.size; i++) {
                 entries.add(leaderBoard.get(i));

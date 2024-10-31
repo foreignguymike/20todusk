@@ -8,6 +8,7 @@ import com.distraction.ttd2024.Data;
 import com.distraction.ttd2024.UI;
 import com.distraction.ttd2024.entity.Background;
 import com.distraction.ttd2024.entity.Collectable;
+import com.distraction.ttd2024.entity.FontEntity;
 import com.distraction.ttd2024.entity.Particle;
 import com.distraction.ttd2024.entity.Player;
 
@@ -29,6 +30,25 @@ public class PlayScreen extends Screen {
 
     private float bubbleTime;
     private float collectSoundTime;
+
+    // replay and save
+    private FontEntity replayFont;
+    private boolean isReplay;
+    private int[] replay = null;
+    private int replayIndex = 0;
+    private final List<Integer> save = new ArrayList<>();
+    private final boolean[] downs = new boolean[4];
+    private int tick;
+
+    public PlayScreen(Context context, int[] replay) {
+        this(context);
+        isReplay = true;
+        this.replay = replay;
+        replayFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
+        replayFont.setText("REPLAY");
+        replayFont.x = Constants.WIDTH / 2f;
+        replayFont.y = Constants.HEIGHT - 15;
+    }
 
     public PlayScreen(Context context) {
         super(context);
@@ -70,17 +90,57 @@ public class PlayScreen extends Screen {
         }
     }
 
+    private void saveInput(int tick, int input, boolean down) {
+        save.add(tick);
+        save.add(input);
+        save.add(down ? 1 : 0);
+        downs[input] = down;
+    }
+
+    private void checkReplay(int tick) {
+        if (replayIndex >= replay.length) return;
+        while (replay[replayIndex] == tick) {
+            downs[replay[replayIndex + 1]] = replay[replayIndex + 2] == 1;
+            replayIndex += 3;
+            if (replayIndex >= replay.length) break;
+        }
+    }
+
     @Override
     public void update(float dt) {
+        tick++;
+
         if (!ignoreInput) {
             if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
                 ignoreInput = true;
                 context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
             }
-            player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
-            player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-            player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-            player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                ignoreInput = true;
+                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score)));
+            }
+
+            boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
+            boolean down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+            boolean left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+            boolean right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+
+            if (isReplay) {
+                checkReplay(tick);
+                player.up = downs[0];
+                player.down = downs[1];
+                player.left = downs[2];
+                player.right = downs[3];
+            } else {
+                if (downs[0] != up) saveInput(tick, 0, up);
+                if (downs[1] != down) saveInput(tick, 1, down);
+                if (downs[2] != left) saveInput(tick, 2, left);
+                if (downs[3] != right) saveInput(tick, 3, right);
+                player.up = up;
+                player.down = down;
+                player.left = left;
+                player.right = right;
+            }
         }
 
         player.update(dt);
@@ -135,7 +195,8 @@ public class PlayScreen extends Screen {
         // done
         if (!ignoreInput && player.x >= TOTAL_DISTANCE) {
             ignoreInput = true;
-            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score)));
+            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, isReplay ? 0 : player.score)));
+            System.out.println(save);
         }
     }
 
@@ -157,6 +218,10 @@ public class PlayScreen extends Screen {
 
         sb.setProjectionMatrix(uiCam.combined);
         ui.render(sb);
+
+        if (isReplay) {
+            replayFont.render(sb);
+        }
 
         sb.end();
     }
