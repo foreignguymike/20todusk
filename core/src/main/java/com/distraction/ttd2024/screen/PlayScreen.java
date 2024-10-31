@@ -8,6 +8,7 @@ import com.distraction.ttd2024.Data;
 import com.distraction.ttd2024.UI;
 import com.distraction.ttd2024.entity.Background;
 import com.distraction.ttd2024.entity.Collectable;
+import com.distraction.ttd2024.entity.Entity;
 import com.distraction.ttd2024.entity.FontEntity;
 import com.distraction.ttd2024.entity.Particle;
 import com.distraction.ttd2024.entity.Player;
@@ -30,6 +31,10 @@ public class PlayScreen extends Screen {
 
     private float bubbleTime;
     private float collectSoundTime;
+
+    // buttons
+    private Entity backButton;
+    private Entity restartButton;
 
     // replay and save
     private FontEntity replayFont;
@@ -67,6 +72,11 @@ public class PlayScreen extends Screen {
         particles = new ArrayList<>();
 
         ui = new UI(context, player, TOTAL_DISTANCE);
+
+        backButton = new Entity(context, Constants.WIDTH - 39, Constants.HEIGHT - 15);
+        backButton.setImage(context.getImage("back"));
+        restartButton = new Entity(context, Constants.WIDTH - 14, Constants.HEIGHT - 15);
+        restartButton.setImage(context.getImage("restart"));
     }
 
     private void hit() {
@@ -111,13 +121,18 @@ public class PlayScreen extends Screen {
         tick++;
 
         if (!ignoreInput) {
-            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                ignoreInput = true;
-                context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
-            }
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 ignoreInput = true;
                 context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context, player.score, save)));
+            }
+
+            if (Gdx.input.justTouched()) {
+                unproject();
+                if (restartButton.contains(m.x, m.y)) {
+                    ignoreInput = true;
+                    context.data.reset();
+                    context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                }
             }
 
             boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -221,6 +236,8 @@ public class PlayScreen extends Screen {
 
         sb.setProjectionMatrix(uiCam.combined);
         ui.render(sb);
+        backButton.render(sb);
+        restartButton.render(sb);
 
         if (isReplay) {
             replayFont.render(sb);

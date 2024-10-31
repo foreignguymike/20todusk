@@ -2,7 +2,9 @@
 size:1024,64
 repeat:none
 2x
-bounds:353,23,23,15
+bounds:376,23,23,15
+back
+bounds:822,38,21,24
 bigsoul
 bounds:796,38,24,24
 bubble1
@@ -16,7 +18,7 @@ bounds:342,2,7,7
 meter
 bounds:324,40,258,5
 meterhead
-bounds:378,25,14,13
+bounds:401,25,14,13
 mountains1
 bounds:2,43,320,19
 mountains2
@@ -26,9 +28,11 @@ bounds:324,47,320,15
 mountains4
 bounds:2,10,320,12
 pixel
-bounds:584,44,1,1
+bounds:353,11,1,1
+restart
+bounds:353,14,21,24
 soul
-bounds:822,45,17,17
+bounds:845,45,17,17
 spike
 bounds:324,11,27,27
 witch1

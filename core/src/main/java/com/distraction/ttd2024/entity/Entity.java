@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Animation;
 import com.distraction.ttd2024.Context;
+import com.distraction.ttd2024.Utils;
 
 public class Entity {
 
@@ -21,15 +22,13 @@ public class Entity {
     protected TextureRegion image;
 
     public Entity(Context context) {
-        this(context, 0, 0, 0, 0);
+        this(context, 0, 0);
     }
 
-    public Entity(Context context, float x, float y, float w, float h) {
+    public Entity(Context context, float x, float y) {
         this.context = context;
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
     }
 
     public void setImage(TextureRegion image) {
@@ -57,6 +56,7 @@ public class Entity {
     }
 
     public void render(SpriteBatch sb) {
+        Utils.drawCentered(sb, image, x, y);
     }
 
     @Override
