@@ -40,7 +40,17 @@ public class Entity {
     }
 
     public boolean contains(float x, float y) {
-        return x > this.x - w / 2 && x < this.x + w / 2 && y > this.y - h / 2 && y < this.y + h / 2;
+        return x > this.x - w / 2
+            && x < this.x + w / 2
+            && y > this.y - h / 2
+            && y < this.y + h / 2;
+    }
+
+    public boolean contains(float x, float y, float px, float py) {
+        return x > this.x - w / 2 - px
+            && x < this.x + w / 2 + px
+            && y > this.y - h / 2 - py
+            && y < this.y + h / 2 + py;
     }
 
     public boolean overlaps(float x, float y, float w, float h) {

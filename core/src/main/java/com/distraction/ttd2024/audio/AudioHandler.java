@@ -105,6 +105,10 @@ public class AudioHandler {
         playSound(key, 1, true);
     }
 
+    public void playSoundCut(String key, float volume) {
+        playSound(key, volume, true);
+    }
+
     public void playSound(String key, float volume, boolean cut) {
         if (sfxMuted) return;
         for (Map.Entry<String, Sound> entry : sounds.entrySet()) {

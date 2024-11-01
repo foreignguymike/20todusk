@@ -189,7 +189,8 @@ public class PlayScreen extends Screen {
                         player.collect(collectable.type);
                         if (collectSoundTime > 0.05f) {
                             collectSoundTime = 0;
-                            context.audio.playSoundCut(collectable.type.sound);
+                            float volume = collectable.type == Collectable.Type.TWOX ? 0.5f : 1f;
+                            context.audio.playSoundCut(collectable.type.sound, volume);
                         }
                     }
                 }

@@ -220,8 +220,13 @@ public class ScoreScreen extends Screen {
                 if (keycode == ESCAPE) {
                     ignoreInput = true;
                     Gdx.input.setInputProcessor(null);
-                    context.data.reset();
-                    context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                    if (context.data.save != null) {
+                        context.data.reset();
+                        context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                    } else {
+                        context.data.reset();
+                        context.sm.push(new CheckeredTransitionScreen(context, new TitleScreen(context)));
+                    }
                 }
                 if (context.data.name != null) {
                     nameFont.setText(context.data.name);

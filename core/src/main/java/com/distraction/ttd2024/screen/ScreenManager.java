@@ -6,7 +6,7 @@ public class ScreenManager {
 
     public int depth = 1;
 
-    private Stack<Screen> screens;
+    private final Stack<Screen> screens;
 
     public ScreenManager() {
         screens = new Stack<>();
@@ -14,6 +14,7 @@ public class ScreenManager {
 
     public void push(Screen s) {
         screens.push(s);
+        System.out.println();
     }
 
     public Screen pop() {
