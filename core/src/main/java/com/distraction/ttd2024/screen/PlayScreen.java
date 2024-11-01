@@ -128,9 +128,10 @@ public class PlayScreen extends Screen {
                 context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
             }
 
-            if (Gdx.input.justTouched()) {
+            if (Gdx.input.isTouched()) {
                 unproject();
                 if (backButton.contains(m.x, m.y)) {
+                    ignoreInput = true;
                     if (isReplay) {
                         context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
                     } else {

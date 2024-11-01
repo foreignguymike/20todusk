@@ -126,14 +126,14 @@ public class ScoreScreen extends Screen {
 
         pixel = context.getPixel();
 
-        BitmapFont impactFont = context.getFont(Context.FONT_NAME_VCR20);
-        leaderboardFont = new FontEntity(context, impactFont);
+        BitmapFont vcrFont = context.getFont(Context.FONT_NAME_VCR20);
+        leaderboardFont = new FontEntity(context, vcrFont);
         leaderboardFont.setText("LEADERBOARD");
         leaderboardFont.center = false;
         leaderboardFont.x = 15f;
         leaderboardFont.y = Constants.HEIGHT - 15f;
 
-        scoreFont = new FontEntity(context, impactFont);
+        scoreFont = new FontEntity(context, vcrFont);
         scoreFont.setText("Score:" + context.data.score);
         scoreFont.center = false;
         scoreFont.x = 165f;
@@ -318,7 +318,7 @@ public class ScoreScreen extends Screen {
         time += dt;
 
         if (!ignoreInput) {
-            if (Gdx.input.justTouched()) {
+            if (Gdx.input.isTouched()) {
                 unproject();
                 for (int i = 0; i < replayButtons.length; i++) {
                     if (replayButtons[i].contains(m.x, m.y)) {

@@ -29,7 +29,7 @@ public class TitleScreen extends Screen {
             if (playButton.contains(m.x, m.y, 3, 3)) arrow.y = playButton.y;
             else if (scoresButton.contains(m.x, m.y, 3, 3)) arrow.y = scoresButton.y;
             else arrow.y = -100;
-            if (Gdx.input.justTouched()) {
+            if (Gdx.input.isTouched()) {
                 if (playButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();

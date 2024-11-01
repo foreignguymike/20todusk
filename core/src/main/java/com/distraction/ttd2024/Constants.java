@@ -2,7 +2,7 @@ package com.distraction.ttd2024;
 
 public class Constants {
 
-    public static final String TITLE = "20 to Dusk";
+    public static final String TITLE = "Twilight Run";
 
     public static final int WIDTH = 320;
     public static final int HEIGHT = 180;

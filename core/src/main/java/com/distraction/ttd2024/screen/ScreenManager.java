@@ -14,17 +14,15 @@ public class ScreenManager {
 
     public void push(Screen s) {
         screens.push(s);
-        System.out.println();
     }
 
-    public Screen pop() {
-        return screens.pop();
+    public void pop() {
+        screens.pop();
     }
 
-    public Screen replace(Screen s) {
-        Screen r = pop();
+    public void replace(Screen s) {
+        pop();
         push(s);
-        return r;
     }
 
     public void update(float dt) {
