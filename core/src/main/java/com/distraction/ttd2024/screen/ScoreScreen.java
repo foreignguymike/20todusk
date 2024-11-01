@@ -102,6 +102,7 @@ public class ScoreScreen extends Screen {
     }};
 
     private static final Color BG_COLOR = Color.valueOf("392946");
+    private static final int MAX_CHARS = 12;
 
     private final TextureRegion pixel;
 
@@ -116,7 +117,7 @@ public class ScoreScreen extends Screen {
 
     private boolean shift = false;
     private boolean loading = false;
-
+    private final Entity submitButton;
 
     private float time;
 
@@ -156,7 +157,7 @@ public class ScoreScreen extends Screen {
 
             scoreFonts[row][1].x = 70;
             scoreFonts[row][1].y = scoreFonts[row][0].y;
-            scoreFonts[row][2].x = 180;
+            scoreFonts[row][2].x = 190;
             scoreFonts[row][2].y = scoreFonts[row][0].y;
 
             scoreFonts[row][1].setText("");
@@ -166,11 +167,7 @@ public class ScoreScreen extends Screen {
         replayData = new int[Context.MAX_SCORES][];
         replayButtons = new Entity[Context.MAX_SCORES];
         for (int i = 0; i < replayButtons.length; i++) {
-            Entity button = new Entity(context);
-            button.setImage(context.getImage("replay"));
-            button.x = 280;
-            button.y = Constants.HEIGHT - 36 - i * 16;
-            replayButtons[i] = button;
+            replayButtons[i] = new Entity(context, context.getImage("replay"), 280, Constants.HEIGHT - 36 - i * 16);
         }
 
         enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
@@ -179,10 +176,11 @@ public class ScoreScreen extends Screen {
         enterNameFont.x = 20;
         enterNameFont.y = 13;
         nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
-        nameFont.setText(context.data.name);
+        if (context.data.name != null) nameFont.setText(context.data.name);
         nameFont.center = false;
         nameFont.x = 100;
         nameFont.y = 13;
+        submitButton = new Entity(context, context.getImage("submit"), 240, 20);
 
         requestLeaderboards();
 
@@ -201,27 +199,33 @@ public class ScoreScreen extends Screen {
                 if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
                     shift = true;
                 }
-                String letter = INPUT_MAP.get(keycode);
-                if (letter != null) {
-                    if (context.data.name.length() < 15) {
-                        if (shift) context.data.name += letter.toUpperCase();
-                        else context.data.name += letter;
+                if (!context.data.submitted) {
+                    String letter = INPUT_MAP.get(keycode);
+                    if (letter != null) {
+                        if (context.data.name.length() < MAX_CHARS) {
+                            if (shift) context.data.name += letter.toUpperCase();
+                            else context.data.name += letter;
+                        }
                     }
-                }
-                if (keycode == BACKSPACE) {
-                    if (!context.data.name.isEmpty()) {
-                        context.data.name = context.data.name.substring(0, context.data.name.length() - 1);
+                    if (keycode == BACKSPACE) {
+                        if (!context.data.name.isEmpty()) {
+                            context.data.name = context.data.name.substring(0, context.data.name.length() - 1);
+                        }
                     }
-                }
-                if (keycode == ENTER) {
-                    submit();
+
+                    if (keycode == ENTER) {
+                        submit();
+                    }
                 }
                 if (keycode == ESCAPE) {
                     ignoreInput = true;
                     Gdx.input.setInputProcessor(null);
+                    context.data.reset();
                     context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
                 }
-                nameFont.setText(context.data.name);
+                if (context.data.name != null) {
+                    nameFont.setText(context.data.name);
+                }
                 return true;
             }
         });
@@ -334,7 +338,7 @@ public class ScoreScreen extends Screen {
 
         sb.setColor(Color.WHITE);
         leaderboardFont.render(sb);
-        scoreFont.render(sb);
+        if (context.data.score > 0) scoreFont.render(sb);
         for (int i = 0; i < scoreFonts.length; i++) {
             for (int j = 0; j < scoreFonts[0].length; j++) {
                 scoreFonts[i][j].render(sb);
@@ -352,6 +356,7 @@ public class ScoreScreen extends Screen {
                     || Integer.parseInt(context.entries.get(context.entries.size() - 1).getFormattedValue()) < context.data.score) {
                     enterNameFont.render(sb);
                     nameFont.render(sb);
+                    submitButton.render(sb);
                 }
             }
         }

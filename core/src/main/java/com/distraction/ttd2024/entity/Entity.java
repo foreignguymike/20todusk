@@ -23,13 +23,14 @@ public class Entity {
     protected TextureRegion image;
 
     public Entity(Context context) {
-        this(context, 0, 0);
+        this.context = context;
     }
 
-    public Entity(Context context, float x, float y) {
+    public Entity(Context context, TextureRegion image, float x, float y) {
         this.context = context;
         this.x = x;
         this.y = y;
+        setImage(image);
     }
 
     public void setImage(TextureRegion image) {
@@ -58,7 +59,7 @@ public class Entity {
 
     public void render(SpriteBatch sb) {
         sb.setColor(Color.WHITE);
-        Utils.drawCentered(sb, image, x, y);
+        if (image != null) Utils.drawCentered(sb, image, x, y);
     }
 
     @Override

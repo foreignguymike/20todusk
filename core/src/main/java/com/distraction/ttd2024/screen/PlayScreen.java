@@ -76,15 +76,13 @@ public class PlayScreen extends Screen {
 
         ui = new UI(context, player, TOTAL_DISTANCE);
 
-        backButton = new Entity(context, Constants.WIDTH - 39, Constants.HEIGHT - 15);
-        backButton.setImage(context.getImage("back"));
-        restartButton = new Entity(context, Constants.WIDTH - 14, Constants.HEIGHT - 15);
-        restartButton.setImage(context.getImage("restart"));
+        backButton = new Entity(context, context.getImage("back"), Constants.WIDTH - 39, Constants.HEIGHT - 15);
+        restartButton = new Entity(context, context.getImage("restart"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
     }
 
     private void hit() {
         List<Collectable.Type> hitList = player.hit();
-        if (!hitList.isEmpty()) context.audio.playSound("hit");
+        context.audio.playSound("hit");
         for (int i = 0; i < hitList.size(); i++) {
             Collectable.Type c = hitList.get(i);
             Particle.Type p;
