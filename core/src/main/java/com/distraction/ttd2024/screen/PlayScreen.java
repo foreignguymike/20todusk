@@ -182,7 +182,7 @@ public class PlayScreen extends Screen {
                 Collectable collectable = collectables.get(i);
                 boolean collided;
                 if (collectable.type == Collectable.Type.SPIKE) {
-                    collided = collectable.contains(player.truex(), player.truey());
+                    collided = collectable.contains(player.truex(), player.truey()) && !player.isHit();
                     if (collided) hit();
                 } else {
                     collided = collectable.overlaps(player.truex(), player.truey(), player.w, player.h);

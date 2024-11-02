@@ -104,9 +104,9 @@ public class ScoreScreen extends Screen {
     private static final Color BG_COLOR = Color.valueOf("392946");
     private static final int MAX_CHARS = 12;
 
+    private final TextureRegion bg;
     private final TextureRegion pixel;
 
-    private final FontEntity leaderboardFont;
     private final FontEntity scoreFont;
     private final FontEntity[][] scoreFonts;
     private final FontEntity enterNameFont;
@@ -124,15 +124,10 @@ public class ScoreScreen extends Screen {
     protected ScoreScreen(Context context) {
         super(context);
 
+        bg = context.getImage("scoresbg");
         pixel = context.getPixel();
 
         BitmapFont vcrFont = context.getFont(Context.FONT_NAME_VCR20);
-        leaderboardFont = new FontEntity(context, vcrFont);
-        leaderboardFont.setText("LEADERBOARD");
-        leaderboardFont.center = false;
-        leaderboardFont.x = 15f;
-        leaderboardFont.y = Constants.HEIGHT - 15f;
-
         scoreFont = new FontEntity(context, vcrFont);
         scoreFont.setText("Score:" + context.data.score);
         scoreFont.center = false;
@@ -144,8 +139,8 @@ public class ScoreScreen extends Screen {
         for (int row = 0; row < scoreFonts.length; row++) {
             scoreFonts[row][0] = new FontEntity(context, m5Font);
             scoreFonts[row][0].center = true;
-            scoreFonts[row][0].x = 40;
-            scoreFonts[row][0].y = Constants.HEIGHT - 36 - row * 16;
+            scoreFonts[row][0].x = 60;
+            scoreFonts[row][0].y = Constants.HEIGHT - 59 - row * 16;
             scoreFonts[row][0].setText((row + 1) + "");
         }
         for (int row = 0; row < scoreFonts.length; row++) {
@@ -157,7 +152,7 @@ public class ScoreScreen extends Screen {
 
             scoreFonts[row][1].x = 70;
             scoreFonts[row][1].y = scoreFonts[row][0].y;
-            scoreFonts[row][2].x = 190;
+            scoreFonts[row][2].x = 167;
             scoreFonts[row][2].y = scoreFonts[row][0].y;
 
             scoreFonts[row][1].setText("");
@@ -167,7 +162,7 @@ public class ScoreScreen extends Screen {
         replayData = new int[Context.MAX_SCORES][];
         replayButtons = new Entity[Context.MAX_SCORES];
         for (int i = 0; i < replayButtons.length; i++) {
-            replayButtons[i] = new Entity(context, context.getImage("replay"), 280, Constants.HEIGHT - 36 - i * 16);
+            replayButtons[i] = new Entity(context, context.getImage("replay"), 236, scoreFonts[i][0].y + 1);
         }
 
         enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
@@ -338,11 +333,12 @@ public class ScoreScreen extends Screen {
         sb.begin();
 
         sb.setProjectionMatrix(cam.combined);
-        sb.setColor(BG_COLOR);
+        sb.setColor(0, 0, 0, MathUtils.clamp(time, 0f, 0.5f));
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+        sb.setColor(Color.WHITE);
+        sb.draw(bg, 0, 0);
 
         sb.setColor(Color.WHITE);
-        leaderboardFont.render(sb);
         if (context.data.score > 0) scoreFont.render(sb);
         for (int i = 0; i < scoreFonts.length; i++) {
             for (int j = 0; j < scoreFonts[0].length; j++) {

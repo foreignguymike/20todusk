@@ -52,6 +52,10 @@ public class Player extends Entity {
         sx = -100;
     }
 
+    public boolean isHit() {
+        return hitTime > 0;
+    }
+
     public float truex() {
         return x + sx;
     }
