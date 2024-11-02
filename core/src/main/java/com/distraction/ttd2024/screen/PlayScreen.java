@@ -220,7 +220,10 @@ public class PlayScreen extends Screen {
                 if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
-                    out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
+                    out.setCallback(() -> {
+                        context.data.reset();
+                        context.sm.replace(new PlayScreen(context));
+                    });
                     out.start();
                 }
                 if (done) {
@@ -312,6 +315,7 @@ public class PlayScreen extends Screen {
         // done
         if (!done && player.x >= TOTAL_DISTANCE) {
             done = true;
+            player.up = player.down = player.left = player.right = false;
             if (isReplay) {
                 out.setCallback(() -> context.sm.pop());
                 out.start();
