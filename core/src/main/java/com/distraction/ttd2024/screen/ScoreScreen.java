@@ -81,10 +81,15 @@ public class ScoreScreen extends Screen {
                 scoreFonts[i][1].setText(entry.getUserDisplayName());
                 scoreFonts[i][2].setText(entry.getFormattedValue());
 
-                String[] split = entry.getScoreTag().split(",");
-                replayData[i] = new int[split.length];
-                for (int j = 0; j < split.length; j++) {
-                    replayData[i][j] = Integer.parseInt(split[j]);
+                String tag = entry.getScoreTag();
+                if (!tag.isEmpty()) {
+                    String[] split = entry.getScoreTag().split(",");
+                    replayData[i] = new int[split.length];
+                    for (int j = 0; j < split.length; j++) {
+                        replayData[i][j] = Integer.parseInt(split[j]);
+                    }
+                } else {
+                    replayData[i] = new int[0];
                 }
             } else {
                 scoreFonts[i][1].setText("");

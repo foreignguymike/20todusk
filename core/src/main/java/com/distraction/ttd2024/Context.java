@@ -78,15 +78,17 @@ public class Context {
     }
 
     public void fetchLeaderboard(SuccessCallback callback) {
-        if (leaderboardsRequested) return;
         if (Constants.LEADERBOARD_ID == 0) {
             callback.callback(false);
             return;
         }
         entries.clear();
+        if (leaderboardsRequested) return;
         leaderboardsRequested = true;
         client.fetchLeaderboardEntries("", MAX_SCORES, false, leaderBoard -> {
+            System.out.println("FETCHED LEADERBOARDS");
             if (leaderBoard != null) {
+                leaderboardsRequested = false;
                 leaderboardsInitialized = true;
                 entries.clear();
                 for (int i = 0; i < leaderBoard.size; i++) {
@@ -103,7 +105,7 @@ public class Context {
     }
 
     public boolean isHighscore(int score) {
-        if (!leaderboardsRequested) return false;
+        if (!leaderboardsInitialized) return false;
         return entries.size() < MAX_SCORES || score > Integer.parseInt(entries.get(entries.size() - 1).getFormattedValue());
     }
 

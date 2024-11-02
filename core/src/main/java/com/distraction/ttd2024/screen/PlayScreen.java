@@ -39,10 +39,12 @@ public class PlayScreen extends Screen {
     private float doneAlpha;
 
     // buttons
-    private Entity backButton;
-    private Entity restartButton;
+    private final Entity backButton;
+    private final Entity restartButton;
+    private final Entity submitButton;
 
-    private FontEntity doneText;
+    private final FontEntity doneText;
+    private final FontEntity submittedFont;
     private boolean loading = false;
     private float time;
 
@@ -88,6 +90,7 @@ public class PlayScreen extends Screen {
 
         backButton = new Entity(context, context.getImage("back"), Constants.WIDTH - 39, Constants.HEIGHT - 15);
         restartButton = new Entity(context, context.getImage("restart"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
+        submitButton = new Entity(context, context.getImage("submit"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f - 30);
 
         ignoreInput = true;
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
@@ -97,6 +100,11 @@ public class PlayScreen extends Screen {
         doneText = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
         doneText.x = Constants.WIDTH / 2f;
         doneText.y = Constants.HEIGHT / 2f;
+
+        submittedFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
+        submittedFont.setText("Submitted!");
+        submittedFont.x = submitButton.x;
+        submittedFont.y = submitButton.y - 4;
     }
 
     private void hit() {
@@ -139,6 +147,7 @@ public class PlayScreen extends Screen {
     private void submit() {
         if (context.data.name.isEmpty() || !context.leaderboardsInitialized) return;
         if (context.data.submitted) return;
+        if (loading) return;
         loading = true;
         context.submitScore(context.data.name, context.data.score, serializeSave(context.data.save), new Net.HttpResponseListener() {
             @Override
@@ -200,6 +209,9 @@ public class PlayScreen extends Screen {
                     context.data.reset();
                     out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
                     out.start();
+                }
+                if (done && submitButton.contains(m.x, m.y)) {
+                    submit();
                 }
             }
 
@@ -287,7 +299,6 @@ public class PlayScreen extends Screen {
             if (context.isHighscore(player.score)) {
                 doneText.setText("HIGH SCORE!");
                 context.data.set(player.score, save);
-                submit();
             } else {
                 doneText.setText("Try again! :)");
             }
@@ -326,6 +337,14 @@ public class PlayScreen extends Screen {
 
             sb.setColor(Color.WHITE);
             doneText.render(sb);
+
+            if (context.isHighscore(player.score)) {
+                if (!context.data.submitted) {
+                    submitButton.render(sb);
+                } else {
+                    submittedFont.render(sb);
+                }
+            }
         }
 
         backButton.render(sb);
@@ -334,9 +353,9 @@ public class PlayScreen extends Screen {
 
         if (loading) {
             for (int i = 0; i < 5; i++) {
-                float x = 10 * MathUtils.cos(-6f * time + i * 0.1f);
-                float y = 10 * MathUtils.sin(-6f * time + i * 0.1f);
-                sb.draw(pixel, 240 + x, 13 + y, 2, 2);
+                float x = submitButton.x + submitButton.w / 2f + 10 * MathUtils.cos(-6f * time + i * 0.1f) - 5;
+                float y = submitButton.y + 10 * MathUtils.sin(-6f * time + i * 0.1f) - 5;
+                sb.draw(pixel, x, y, 2, 2);
             }
         }
 
