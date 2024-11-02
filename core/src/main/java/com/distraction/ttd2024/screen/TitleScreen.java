@@ -33,9 +33,7 @@ public class TitleScreen extends Screen {
 
         ignoreInput = true;
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
-        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> {
-            context.sm.push(new PlayScreen(context));
-        });
+        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.push(new PlayScreen(context)));
 
         playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
         playerFont.setText("Player: " + context.data.name);
@@ -89,6 +87,10 @@ public class TitleScreen extends Screen {
                     context.data.reset();
                     fromLeaderboards = true;
                     context.sm.push(new ScoreScreen(context));
+                } else if (playerFont.contains(m.x, m.y, 5, 3)) {
+                    ignoreInput = true;
+                    out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new NameScreen(context)));
+                    out.start();
                 }
             }
         }

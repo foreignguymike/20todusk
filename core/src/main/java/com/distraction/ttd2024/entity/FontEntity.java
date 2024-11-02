@@ -35,6 +35,15 @@ public class FontEntity extends Entity {
     }
 
     @Override
+    public boolean contains(float x, float y, float px, float py) {
+        if (center) return super.contains(x, y, px, py);
+        else return x > this.x - px
+            && x < this.x + w + px
+            && y > this.y - h / 2 - py
+            && y < this.y + h / 2 + py;
+    }
+
+    @Override
     public void render(SpriteBatch sb) {
         if (center) {
             font.draw(sb, glyphLayout, x - glyphLayout.width / 2f, y + glyphLayout.height / 2f);

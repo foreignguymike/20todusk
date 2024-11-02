@@ -188,13 +188,6 @@ public class PlayScreen extends Screen {
         out.update(dt);
 
         if (!ignoreInput) {
-//            // TODO DON"T FORGET TO REMOVE THIS BEFORE RELEASE
-//            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-//                ignoreInput = true;
-//                context.data.set(player.score, save);
-//                context.sm.push(new ScoreScreen(context));
-//            }
-
             if (Gdx.input.isTouched()) {
                 unproject();
                 if (backButton.contains(m.x, m.y)) {

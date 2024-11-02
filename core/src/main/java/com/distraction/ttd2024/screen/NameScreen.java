@@ -113,6 +113,7 @@ public class NameScreen extends Screen {
         enterNameFont.x = Constants.WIDTH / 2f;
         enterNameFont.y = Constants.HEIGHT / 2f + 20;
         nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
+        nameFont.setText(context.data.name);
         nameFont.center = true;
         nameFont.x = Constants.WIDTH / 2f;
         nameFont.y = Constants.HEIGHT / 2f - 10;
