@@ -42,6 +42,11 @@ public abstract class Screen {
         uiCam.unproject(m);
     }
 
+    protected void unproject(float x, float y) {
+        m.set(x, y, 0);
+        uiCam.unproject(m);
+    }
+
     public void resume() {}
 
     public void pause() {}

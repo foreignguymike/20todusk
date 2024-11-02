@@ -65,11 +65,14 @@ public class UI {
         sb.setColor(Color.WHITE);
         sb.draw(meterHead, mx + md, my - 2);
 
-        font.render(sb);
-
         if (player.doubleTime > 0) {
             sb.draw(twox, 4, 2);
         }
+    }
+
+    public void renderScore(SpriteBatch sb) {
+        sb.setColor(Color.WHITE);
+        font.render(sb);
     }
 
 }

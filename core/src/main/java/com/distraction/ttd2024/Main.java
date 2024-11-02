@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.distraction.ttd2024.gj.GameJoltClient;
-import com.distraction.ttd2024.screen.TitleScreen;
+import com.distraction.ttd2024.screen.NameScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -22,7 +22,7 @@ public class Main extends ApplicationAdapter {
         client.setGjScoreTableMapper(key -> Constants.LEADERBOARD_ID);
         client.initialize(Constants.APP_ID, Constants.API_KEY);
         context.client = client;
-        context.sm.push(new TitleScreen(context));
+        context.sm.push(new NameScreen(context));
     }
 
     @Override

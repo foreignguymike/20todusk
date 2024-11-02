@@ -26,6 +26,7 @@ public class ScreenManager {
     public void replace(Screen s) {
         screens.pop();
         screens.push(s);
+        peek().resume();
     }
 
     public Screen peek() {

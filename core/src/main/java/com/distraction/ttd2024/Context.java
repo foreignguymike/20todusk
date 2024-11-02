@@ -84,9 +84,10 @@ public class Context {
             return;
         }
         entries.clear();
+        leaderboardsRequested = true;
         client.fetchLeaderboardEntries("", MAX_SCORES, false, leaderBoard -> {
             if (leaderBoard != null) {
-                leaderboardsRequested = true;
+                leaderboardsInitialized = true;
                 entries.clear();
                 for (int i = 0; i < leaderBoard.size; i++) {
                     entries.add(leaderBoard.get(i));
@@ -99,6 +100,11 @@ public class Context {
     public void submitScore(String name, int score, String metadata, Net.HttpResponseListener listener) {
         client.setGuestName(name);
         client.submitToLeaderboard("", score, metadata, 10000, listener);
+    }
+
+    public boolean isHighscore(int score) {
+        if (!leaderboardsRequested) return false;
+        return entries.size() < MAX_SCORES || score > Integer.parseInt(entries.get(entries.size() - 1).getFormattedValue());
     }
 
     public void dispose() {

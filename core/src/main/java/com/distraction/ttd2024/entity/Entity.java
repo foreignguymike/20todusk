@@ -22,6 +22,8 @@ public class Entity {
     protected Animation animation;
     protected TextureRegion image;
 
+    public float a = 1f;
+
     public Entity(Context context) {
         this.context = context;
     }
@@ -68,7 +70,7 @@ public class Entity {
     }
 
     public void render(SpriteBatch sb) {
-        sb.setColor(Color.WHITE);
+        sb.setColor(1, 1, 1, a);
         if (image != null) Utils.drawCentered(sb, image, x, y);
     }
 

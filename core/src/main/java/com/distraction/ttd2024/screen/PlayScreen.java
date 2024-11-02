@@ -2,6 +2,9 @@ package com.distraction.ttd2024.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.Data;
@@ -33,10 +36,15 @@ public class PlayScreen extends Screen {
     private float collectSoundTime;
 
     private boolean done;
+    private float doneAlpha;
 
     // buttons
     private Entity backButton;
     private Entity restartButton;
+
+    private FontEntity doneText;
+    private boolean loading = false;
+    private float time;
 
     // replay and save
     private FontEntity replayFont;
@@ -85,6 +93,10 @@ public class PlayScreen extends Screen {
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         in.start();
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
+
+        doneText = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
+        doneText.x = Constants.WIDTH / 2f;
+        doneText.y = Constants.HEIGHT / 2f;
     }
 
     private void hit() {
@@ -124,19 +136,64 @@ public class PlayScreen extends Screen {
         }
     }
 
+    private void submit() {
+        if (context.data.name.isEmpty() || !context.leaderboardsInitialized) return;
+        if (context.data.submitted) return;
+        loading = true;
+        context.submitScore(context.data.name, context.data.score, serializeSave(context.data.save), new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                String res = httpResponse.getResultAsString();
+                // throwing an exception with SubmitScoreResponse here for some reason
+                // just doing a sus true check instead
+                if (res.contains("true")) {
+                    context.data.submitted = true;
+                    context.fetchLeaderboard((success) -> {});
+                } else {
+                    failed(null);
+                }
+                loading = false;
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                ignoreInput = false;
+                loading = false;
+            }
+
+            @Override
+            public void cancelled() {
+                failed(null);
+            }
+        });
+    }
+
+    private String serializeSave(List<Integer> save) {
+        StringBuilder ret = new StringBuilder();
+        if (!save.isEmpty()) {
+            ret = new StringBuilder(save.get(0).toString());
+        }
+        for (int i = 1; i < save.size(); i++) {
+            ret.append(",").append(save.get(i).toString());
+        }
+        return ret.toString();
+    }
+
     @Override
     public void update(float dt) {
         tick++;
+        time += dt;
 
         in.update(dt);
         out.update(dt);
 
         if (!ignoreInput) {
-            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                ignoreInput = true;
-                context.data.set("", player.score, save);
-                context.sm.push(new ScoreScreen(context));
-            }
+//            // TODO DON"T FORGET TO REMOVE THIS BEFORE RELEASE
+//            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+//                ignoreInput = true;
+//                context.data.set(player.score, save);
+//                context.sm.push(new ScoreScreen(context));
+//            }
 
             if (Gdx.input.isTouched()) {
                 unproject();
@@ -234,6 +291,16 @@ public class PlayScreen extends Screen {
                 out.setCallback(() -> context.sm.pop());
                 out.start();
             }
+            if (context.isHighscore(player.score)) {
+                doneText.setText("HIGH SCORE!");
+                context.data.set(player.score, save);
+                submit();
+            } else {
+                doneText.setText("Try again! :)");
+            }
+        }
+        if (done && !isReplay) {
+            doneAlpha = MathUtils.clamp(doneAlpha + dt, 0, 0.9f);
         }
     }
 
@@ -255,11 +322,29 @@ public class PlayScreen extends Screen {
 
         sb.setProjectionMatrix(uiCam.combined);
         ui.render(sb);
-        backButton.render(sb);
-        if (!isReplay) restartButton.render(sb);
 
         if (isReplay) {
             replayFont.render(sb);
+        }
+
+        if (done && !isReplay) {
+            sb.setColor(0, 0, 0, doneAlpha);
+            sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+
+            sb.setColor(Color.WHITE);
+            doneText.render(sb);
+        }
+
+        backButton.render(sb);
+        if (!isReplay) restartButton.render(sb);
+        ui.renderScore(sb);
+
+        if (loading) {
+            for (int i = 0; i < 5; i++) {
+                float x = 10 * MathUtils.cos(-6f * time + i * 0.1f);
+                float y = 10 * MathUtils.sin(-6f * time + i * 0.1f);
+                sb.draw(pixel, 240 + x, 13 + y, 2, 2);
+            }
         }
 
         in.render(sb);

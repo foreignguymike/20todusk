@@ -15,8 +15,13 @@ public class TitleScreen extends Screen {
     private final Entity scoresButton;
     private final Entity arrow;
 
+    private final FontEntity playerFont;
+
     private final FontEntity errorFont;
     private float errorFontTime;
+
+    private boolean first = true;
+    private boolean fromLeaderboards;
 
     public TitleScreen(Context context) {
         super(context);
@@ -32,22 +37,36 @@ public class TitleScreen extends Screen {
             context.sm.push(new PlayScreen(context));
         });
 
+        playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
+        playerFont.setText("Player: " + context.data.name);
+        playerFont.center = false;
+        playerFont.x = 5;
+        playerFont.y = Constants.HEIGHT - 10;
+
         errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
         errorFont.x = Constants.WIDTH / 2f;
         errorFont.y = 5;
-        context.fetchLeaderboard((success) -> {
-            errorFont.setText(success ? "leaderboards fetched" : "error fetching leaderboards");
-            errorFontTime = 3f;
-        });
+
+        if (!context.leaderboardsInitialized && !context.leaderboardsRequested) {
+            context.fetchLeaderboard((success) -> {
+                errorFont.setText(success ? "leaderboards fetched" : "error fetching leaderboards");
+                errorFontTime = 3f;
+            });
+        }
     }
 
     @Override
     public void resume() {
         ignoreInput = false;
-        if (context.data.firstTitle) {
-            context.data.firstTitle = false;
-        } else if (context.sm.depth == 1) {
+        if (first) {
+            first = false;
+            in = new Transition(context, Transition.Type.FLASH_IN, 0.5f, () -> ignoreInput = false);
             in.start();
+        } else if (!fromLeaderboards) {
+            in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
+            in.start();
+        } else {
+            fromLeaderboards = false;
         }
     }
 
@@ -68,6 +87,7 @@ public class TitleScreen extends Screen {
                 } else if (scoresButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
+                    fromLeaderboards = true;
                     context.sm.push(new ScoreScreen(context));
                 }
             }
@@ -84,6 +104,7 @@ public class TitleScreen extends Screen {
         playButton.render(sb);
         scoresButton.render(sb);
         arrow.render(sb);
+        playerFont.render(sb);
         if (errorFontTime > 0) {
             errorFont.render(sb);
         }
