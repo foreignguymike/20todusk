@@ -101,7 +101,7 @@ public class ScoreScreen extends Screen {
         replayData = new int[Context.MAX_SCORES][];
         replayButtons = new Entity[Context.MAX_SCORES];
         for (int i = 0; i < replayButtons.length; i++) {
-            replayButtons[i] = new Entity(context, context.getImage("replay"), 246, scoreFonts[i][0].y + 1);
+            replayButtons[i] = new Entity(context, context.getImage("replay"), scoreFonts[i][0].x + 196, scoreFonts[i][0].y + 1);
         }
 
         fontEntity = new FontEntity(context, m5Font);
