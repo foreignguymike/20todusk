@@ -41,8 +41,4 @@ public class Utils {
         return value;
     }
 
-    public static int rint(int max) {
-        return random.nextInt(max);
-    }
-
 }

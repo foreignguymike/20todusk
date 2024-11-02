@@ -4,7 +4,7 @@ repeat:none
 2x
 bounds:87,2,23,15
 back
-bounds:722,164,21,24
+bounds:646,69,21,24
 bigsoul
 bounds:696,164,24,24
 bubble1
@@ -15,6 +15,8 @@ bubble3
 bounds:746,198,7,7
 bubble4
 bounds:675,141,7,7
+close
+bounds:722,164,21,24
 menuarrow
 bounds:145,21,9,13
 meter

@@ -20,10 +20,28 @@ public class TitleScreen extends Screen {
         playButton = new Entity(context, context.getImage("play"), 250, 80);
         scoresButton = new Entity(context, context.getImage("scores"), 266, 55);
         arrow = new Entity(context, context.getImage("menuarrow"), 216, -100);
+
+        ignoreInput = true;
+        in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
+        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> {
+            context.sm.push(new PlayScreen(context));
+        });
+    }
+
+    @Override
+    public void resume() {
+        ignoreInput = false;
+        if (context.data.firstTitle) {
+            context.data.firstTitle = false;
+        } else if (context.sm.depth == 1) {
+            in.start();
+        }
     }
 
     @Override
     public void update(float dt) {
+        in.update(dt);
+        out.update(dt);
         if (!ignoreInput) {
             unproject();
             if (playButton.contains(m.x, m.y, 3, 3)) arrow.y = playButton.y;
@@ -33,11 +51,11 @@ public class TitleScreen extends Screen {
                 if (playButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
-                    context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                    out.start();
                 } else if (scoresButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
-                    context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
+                    context.sm.push(new ScoreScreen(context));
                 }
             }
         }
@@ -52,6 +70,9 @@ public class TitleScreen extends Screen {
         playButton.render(sb);
         scoresButton.render(sb);
         arrow.render(sb);
+
+        in.render(sb);
+        out.render(sb);
         sb.end();
     }
 }

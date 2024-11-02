@@ -21,6 +21,9 @@ public abstract class Screen {
 
     protected final TextureRegion pixel;
 
+    protected Transition in = null;
+    protected Transition out = null;
+
     protected Screen(Context context) {
         this.context = context;
         sb = context.sb;
@@ -38,6 +41,10 @@ public abstract class Screen {
         m.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         uiCam.unproject(m);
     }
+
+    public void resume() {}
+
+    public void pause() {}
 
     public abstract void update(float dt);
 

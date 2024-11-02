@@ -7,6 +7,7 @@ public class PlayerData {
     public int score;
     public List<Integer> save;
     public boolean submitted;
+    public boolean firstTitle = true;
 
     public void set(String name, int score, List<Integer> save) {
         this.name = name;

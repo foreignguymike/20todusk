@@ -7,7 +7,6 @@ import static com.badlogic.gdx.Input.Keys.C;
 import static com.badlogic.gdx.Input.Keys.D;
 import static com.badlogic.gdx.Input.Keys.E;
 import static com.badlogic.gdx.Input.Keys.ENTER;
-import static com.badlogic.gdx.Input.Keys.ESCAPE;
 import static com.badlogic.gdx.Input.Keys.F;
 import static com.badlogic.gdx.Input.Keys.G;
 import static com.badlogic.gdx.Input.Keys.H;
@@ -34,6 +33,7 @@ import static com.badlogic.gdx.Input.Keys.R;
 import static com.badlogic.gdx.Input.Keys.S;
 import static com.badlogic.gdx.Input.Keys.SHIFT_LEFT;
 import static com.badlogic.gdx.Input.Keys.SHIFT_RIGHT;
+import static com.badlogic.gdx.Input.Keys.SPACE;
 import static com.badlogic.gdx.Input.Keys.T;
 import static com.badlogic.gdx.Input.Keys.U;
 import static com.badlogic.gdx.Input.Keys.V;
@@ -99,6 +99,7 @@ public class ScoreScreen extends Screen {
         put(X, "x");
         put(Y, "y");
         put(Z, "z");
+        put(SPACE, " ");
     }};
 
     private static final Color BG_COLOR = Color.valueOf("392946");
@@ -115,17 +116,22 @@ public class ScoreScreen extends Screen {
     private final int[][] replayData;
     private final Entity[] replayButtons;
 
+    private final Entity closeButton;
+    private boolean closing;
+
     private boolean shift = false;
     private boolean loading = false;
     private final Entity submitButton;
 
-    private float time;
+    private float alpha;
 
     protected ScoreScreen(Context context) {
         super(context);
 
         bg = context.getImage("scoresbg");
         pixel = context.getPixel();
+
+        context.sm.depth = 2;
 
         BitmapFont vcrFont = context.getFont(Context.FONT_NAME_VCR20);
         scoreFont = new FontEntity(context, vcrFont);
@@ -139,7 +145,7 @@ public class ScoreScreen extends Screen {
         for (int row = 0; row < scoreFonts.length; row++) {
             scoreFonts[row][0] = new FontEntity(context, m5Font);
             scoreFonts[row][0].center = true;
-            scoreFonts[row][0].x = 60;
+            scoreFonts[row][0].x = 50;
             scoreFonts[row][0].y = Constants.HEIGHT - 59 - row * 16;
             scoreFonts[row][0].setText((row + 1) + "");
         }
@@ -150,7 +156,7 @@ public class ScoreScreen extends Screen {
             scoreFonts[row][1].center = false;
             scoreFonts[row][2].center = false;
 
-            scoreFonts[row][1].x = 70;
+            scoreFonts[row][1].x = 60;
             scoreFonts[row][1].y = scoreFonts[row][0].y;
             scoreFonts[row][2].x = 167;
             scoreFonts[row][2].y = scoreFonts[row][0].y;
@@ -162,8 +168,13 @@ public class ScoreScreen extends Screen {
         replayData = new int[Context.MAX_SCORES][];
         replayButtons = new Entity[Context.MAX_SCORES];
         for (int i = 0; i < replayButtons.length; i++) {
-            replayButtons[i] = new Entity(context, context.getImage("replay"), 236, scoreFonts[i][0].y + 1);
+            replayButtons[i] = new Entity(context, context.getImage("replay"), 246, scoreFonts[i][0].y + 1);
         }
+
+        closeButton = new Entity(context, context.getImage("close"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
+
+        uiCam.position.y = Constants.HEIGHT * 1.5f;
+        uiCam.update();
 
         enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
         enterNameFont.setText("Name:");
@@ -210,17 +221,6 @@ public class ScoreScreen extends Screen {
 
                     if (keycode == ENTER) {
                         submit();
-                    }
-                }
-                if (keycode == ESCAPE) {
-                    ignoreInput = true;
-                    Gdx.input.setInputProcessor(null);
-                    if (context.data.save != null) {
-                        context.data.reset();
-                        context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
-                    } else {
-                        context.data.reset();
-                        context.sm.push(new CheckeredTransitionScreen(context, new TitleScreen(context)));
                     }
                 }
                 if (context.data.name != null) {
@@ -309,8 +309,34 @@ public class ScoreScreen extends Screen {
     }
 
     @Override
+    public void resume() {
+        ignoreInput = false;
+        context.sm.depth = 2;
+    }
+
+    @Override
     public void update(float dt) {
-        time += dt;
+        if (!closing) {
+            alpha += dt;
+            if (alpha > 0.5f) alpha = 0.5f;
+            uiCam.position.x = Constants.WIDTH / 2f + MathUtils.random(-5, 5);
+            uiCam.position.y -= 300 * dt;
+            if (uiCam.position.y < Constants.HEIGHT / 2f) {
+                uiCam.position.x = Constants.WIDTH / 2f;
+                uiCam.position.y = Constants.HEIGHT / 2f;
+            }
+            uiCam.update();
+        } else {
+            alpha -= dt;
+            if (alpha < 0) alpha = 0;
+            uiCam.position.y += 600 * dt;
+            if (uiCam.position.y > Constants.HEIGHT * 2f) {
+                context.sm.pop();
+                context.sm.depth = 1;
+                return;
+            }
+            uiCam.update();
+        }
 
         if (!ignoreInput) {
             if (Gdx.input.isTouched()) {
@@ -319,10 +345,16 @@ public class ScoreScreen extends Screen {
                     if (replayButtons[i].contains(m.x, m.y)) {
                         if (replayData[i] != null) {
                             ignoreInput = true;
-                            context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context, replayData[i])));
+                            context.sm.push(new PlayScreen(context, replayData[i]));
+                            context.sm.depth = 1;
                             break;
                         }
                     }
+                }
+                if (closeButton.contains(m.x, m.y)) {
+                    ignoreInput = true;
+                    Gdx.input.setInputProcessor(null);
+                    closing = true;
                 }
             }
         }
@@ -333,8 +365,10 @@ public class ScoreScreen extends Screen {
         sb.begin();
 
         sb.setProjectionMatrix(cam.combined);
-        sb.setColor(0, 0, 0, MathUtils.clamp(time, 0f, 0.5f));
+        sb.setColor(0, 0, 0, MathUtils.clamp(alpha * 2f, 0f, 0.9f));
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+
+        sb.setProjectionMatrix(uiCam.combined);
         sb.setColor(Color.WHITE);
         sb.draw(bg, 0, 0);
 
@@ -350,6 +384,7 @@ public class ScoreScreen extends Screen {
                 replayButtons[i].render(sb);
             }
         }
+        closeButton.render(sb);
 
         if (context.leaderboardsInitialized) {
             if (context.data.score > 0) {
@@ -364,8 +399,8 @@ public class ScoreScreen extends Screen {
 
         if (loading) {
             for (int i = 0; i < 5; i++) {
-                float x = 10 * MathUtils.cos(-6f * time + i * 0.1f);
-                float y = 10 * MathUtils.sin(-6f * time + i * 0.1f);
+                float x = 10 * MathUtils.cos(-6f * alpha + i * 0.1f);
+                float y = 10 * MathUtils.sin(-6f * alpha + i * 0.1f);
                 sb.draw(pixel, 240 + x, 13 + y, 2, 2);
             }
         }

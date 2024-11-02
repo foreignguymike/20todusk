@@ -94,10 +94,6 @@ public class Context {
         client.submitToLeaderboard("", score, metadata, 10000, listener);
     }
 
-    public interface SimpleCallback {
-        void callback();
-    }
-
     public void dispose() {
         sb.dispose();
     }

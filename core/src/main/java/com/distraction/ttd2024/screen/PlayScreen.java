@@ -32,6 +32,8 @@ public class PlayScreen extends Screen {
     private float bubbleTime;
     private float collectSoundTime;
 
+    private boolean done;
+
     // buttons
     private Entity backButton;
     private Entity restartButton;
@@ -78,6 +80,11 @@ public class PlayScreen extends Screen {
 
         backButton = new Entity(context, context.getImage("back"), Constants.WIDTH - 39, Constants.HEIGHT - 15);
         restartButton = new Entity(context, context.getImage("restart"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
+
+        ignoreInput = true;
+        in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
+        in.start();
+        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
     }
 
     private void hit() {
@@ -121,50 +128,52 @@ public class PlayScreen extends Screen {
     public void update(float dt) {
         tick++;
 
+        in.update(dt);
+        out.update(dt);
+
         if (!ignoreInput) {
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 ignoreInput = true;
                 context.data.set("", player.score, save);
-                context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
+                context.sm.push(new ScoreScreen(context));
             }
 
             if (Gdx.input.isTouched()) {
                 unproject();
                 if (backButton.contains(m.x, m.y)) {
                     ignoreInput = true;
-                    if (isReplay) {
-                        context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
-                    } else {
-                        context.sm.push(new CheckeredTransitionScreen(context, new TitleScreen(context)));
-                    }
+                    out.setCallback(() -> context.sm.pop());
+                    out.start();
                 }
                 if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     context.data.reset();
-                    context.sm.push(new CheckeredTransitionScreen(context, new PlayScreen(context)));
+                    out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
+                    out.start();
                 }
             }
 
-            boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
-            boolean down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-            boolean left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-            boolean right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-
-            if (isReplay) {
-                checkReplay(tick);
-                player.up = downs[0];
-                player.down = downs[1];
-                player.left = downs[2];
-                player.right = downs[3];
-            } else {
-                if (downs[0] != up) saveInput(tick, 0, up);
-                if (downs[1] != down) saveInput(tick, 1, down);
-                if (downs[2] != left) saveInput(tick, 2, left);
-                if (downs[3] != right) saveInput(tick, 3, right);
-                player.up = up;
-                player.down = down;
-                player.left = left;
-                player.right = right;
+            if (!done) {
+                boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
+                boolean down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+                boolean left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+                boolean right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+                if (isReplay) {
+                    checkReplay(tick);
+                    player.up = downs[0];
+                    player.down = downs[1];
+                    player.left = downs[2];
+                    player.right = downs[3];
+                } else {
+                    if (downs[0] != up) saveInput(tick, 0, up);
+                    if (downs[1] != down) saveInput(tick, 1, down);
+                    if (downs[2] != left) saveInput(tick, 2, left);
+                    if (downs[3] != right) saveInput(tick, 3, right);
+                    player.up = up;
+                    player.down = down;
+                    player.left = left;
+                    player.right = right;
+                }
             }
         }
 
@@ -219,15 +228,9 @@ public class PlayScreen extends Screen {
         collectSoundTime += dt;
 
         // done
-        if (!ignoreInput && player.x >= TOTAL_DISTANCE) {
-            ignoreInput = true;
-            if (!isReplay) {
-                context.data.set(null, player.score, save);
-            }
-            if (!isReplay) {
-                context.data.set("", player.score, save);
-            }
-            context.sm.push(new CheckeredTransitionScreen(context, new ScoreScreen(context)));
+        if (!done && player.x >= TOTAL_DISTANCE) {
+            done = true;
+            context.sm.pop();
         }
     }
 
@@ -255,6 +258,9 @@ public class PlayScreen extends Screen {
         if (isReplay) {
             replayFont.render(sb);
         }
+
+        in.render(sb);
+        out.render(sb);
 
         sb.end();
     }
