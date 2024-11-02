@@ -230,7 +230,10 @@ public class PlayScreen extends Screen {
         // done
         if (!done && player.x >= TOTAL_DISTANCE) {
             done = true;
-            context.sm.pop();
+            if (isReplay) {
+                out.setCallback(() -> context.sm.pop());
+                out.start();
+            }
         }
     }
 

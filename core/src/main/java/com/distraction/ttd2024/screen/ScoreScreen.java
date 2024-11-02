@@ -188,7 +188,7 @@ public class ScoreScreen extends Screen {
         nameFont.y = 13;
         submitButton = new Entity(context, context.getImage("submit"), 240, 20);
 
-        requestLeaderboards();
+        updateLeaderboards();
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -231,17 +231,6 @@ public class ScoreScreen extends Screen {
         });
     }
 
-    private void requestLeaderboards() {
-        if (!context.leaderboardsRequested) {
-            context.leaderboardsRequested = true;
-            context.fetchLeaderboard(() -> {
-                context.leaderboardsInitialized = true;
-                updateLeaderboards();
-            });
-        }
-        updateLeaderboards();
-    }
-
     private void updateLeaderboards() {
         for (int i = 0; i < Context.MAX_SCORES; i++) {
             if (i < context.entries.size()) {
@@ -273,7 +262,7 @@ public class ScoreScreen extends Screen {
                 // just doing a sus true check instead
                 if (res.contains("true")) {
                     context.data.submitted = true;
-                    context.fetchLeaderboard(() -> updateLeaderboards());
+                    context.fetchLeaderboard((success) -> updateLeaderboards());
                 } else {
                     failed(null);
                 }
@@ -338,7 +327,7 @@ public class ScoreScreen extends Screen {
             uiCam.update();
         }
 
-        if (!ignoreInput) {
+        if (!ignoreInput && alpha >= 0.5f) {
             if (Gdx.input.isTouched()) {
                 unproject();
                 for (int i = 0; i < replayButtons.length; i++) {

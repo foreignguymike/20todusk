@@ -77,15 +77,22 @@ public class Context {
         return assets.get(name, BitmapFont.class);
     }
 
-    public void fetchLeaderboard(SimpleCallback callback) {
+    public void fetchLeaderboard(SuccessCallback callback) {
+        if (leaderboardsRequested) return;
+        if (Constants.LEADERBOARD_ID == 0) {
+            callback.callback(false);
+            return;
+        }
         entries.clear();
-        if (Constants.LEADERBOARD_ID == 0) return;
         client.fetchLeaderboardEntries("", MAX_SCORES, false, leaderBoard -> {
-            entries.clear();
-            for (int i = 0; i < leaderBoard.size; i++) {
-                entries.add(leaderBoard.get(i));
+            if (leaderBoard != null) {
+                leaderboardsRequested = true;
+                entries.clear();
+                for (int i = 0; i < leaderBoard.size; i++) {
+                    entries.add(leaderBoard.get(i));
+                }
             }
-            callback.callback();
+            callback.callback(leaderBoard != null);
         });
     }
 

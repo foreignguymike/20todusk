@@ -3,8 +3,10 @@ package com.distraction.ttd2024.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.entity.Entity;
+import com.distraction.ttd2024.entity.FontEntity;
 
 public class TitleScreen extends Screen {
 
@@ -12,6 +14,9 @@ public class TitleScreen extends Screen {
     private final Entity playButton;
     private final Entity scoresButton;
     private final Entity arrow;
+
+    private final FontEntity errorFont;
+    private float errorFontTime;
 
     public TitleScreen(Context context) {
         super(context);
@@ -25,6 +30,14 @@ public class TitleScreen extends Screen {
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> {
             context.sm.push(new PlayScreen(context));
+        });
+
+        errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
+        errorFont.x = Constants.WIDTH / 2f;
+        errorFont.y = 5;
+        context.fetchLeaderboard((success) -> {
+            errorFont.setText(success ? "leaderboards fetched" : "error fetching leaderboards");
+            errorFontTime = 3f;
         });
     }
 
@@ -59,6 +72,7 @@ public class TitleScreen extends Screen {
                 }
             }
         }
+        errorFontTime -= dt;
     }
 
     @Override
@@ -70,6 +84,9 @@ public class TitleScreen extends Screen {
         playButton.render(sb);
         scoresButton.render(sb);
         arrow.render(sb);
+        if (errorFontTime > 0) {
+            errorFont.render(sb);
+        }
 
         in.render(sb);
         out.render(sb);
