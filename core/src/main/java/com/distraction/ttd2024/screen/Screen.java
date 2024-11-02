@@ -42,6 +42,11 @@ public abstract class Screen {
         uiCam.unproject(m);
     }
 
+    protected void unproject(OrthographicCamera cam) {
+        m.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        cam.unproject(m);
+    }
+
     protected void unproject(float x, float y) {
         m.set(x, y, 0);
         uiCam.unproject(m);

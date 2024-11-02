@@ -57,7 +57,6 @@ public class TitleScreen extends Screen {
 
     @Override
     public void resume() {
-        ignoreInput = false;
         if (first) {
             first = false;
             in = new Transition(context, Transition.Type.FLASH_IN, 0.5f, () -> ignoreInput = false);
@@ -66,6 +65,7 @@ public class TitleScreen extends Screen {
             in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
             in.start();
         } else {
+            ignoreInput = false;
             fromLeaderboards = false;
         }
     }

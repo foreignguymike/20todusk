@@ -2,6 +2,7 @@ package com.distraction.ttd2024.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -23,6 +24,7 @@ public class ScoreScreen extends Screen {
     private static final int SCORES_PER_PAGE = 8;
     private static final int PAGES = Context.MAX_SCORES / SCORES_PER_PAGE;
     private int page;
+    private int newPage;
 
     private final TextureRegion bg;
     private final TextureRegion pixel;
@@ -35,10 +37,14 @@ public class ScoreScreen extends Screen {
     private final FontEntity fontEntity;
     private final Entity refreshButton;
 
+    private final Entity scoreLeft;
+    private final Entity scoreRight;
+
     private final Entity closeButton;
     private boolean closing;
 
     private float alpha;
+    private OrthographicCamera staticCam;
 
     protected ScoreScreen(Context context) {
         super(context);
@@ -51,10 +57,11 @@ public class ScoreScreen extends Screen {
         BitmapFont m5Font = context.getFont(Context.FONT_NAME_M5X716);
         scoreFonts = new FontEntity[Context.MAX_SCORES][3];
         for (int row = 0; row < scoreFonts.length; row++) {
+            int page = row / SCORES_PER_PAGE;
             scoreFonts[row][0] = new FontEntity(context, m5Font);
             scoreFonts[row][0].center = true;
-            scoreFonts[row][0].x = 50;
-            scoreFonts[row][0].y = Constants.HEIGHT - 59 - row * 16;
+            scoreFonts[row][0].x = Constants.WIDTH * page + 50;
+            scoreFonts[row][0].y = Constants.HEIGHT - 59 - (row % SCORES_PER_PAGE) * 16;
             scoreFonts[row][0].setText((row + 1) + "");
         }
         for (int row = 0; row < scoreFonts.length; row++) {
@@ -64,9 +71,9 @@ public class ScoreScreen extends Screen {
             scoreFonts[row][1].center = false;
             scoreFonts[row][2].center = false;
 
-            scoreFonts[row][1].x = 60;
+            scoreFonts[row][1].x = scoreFonts[row][0].x + 10;
             scoreFonts[row][1].y = scoreFonts[row][0].y;
-            scoreFonts[row][2].x = 167;
+            scoreFonts[row][2].x = scoreFonts[row][0].x + 117;
             scoreFonts[row][2].y = scoreFonts[row][0].y;
 
             scoreFonts[row][1].setText("");
@@ -102,10 +109,16 @@ public class ScoreScreen extends Screen {
         fontEntity.y = Constants.HEIGHT / 2f + 10;
         refreshButton = new Entity(context, context.getImage("restart"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f - 10);
 
+        scoreLeft = new Entity(context, context.getImage("scoreleft"), 20, Constants.HEIGHT / 2f - 30);
+        scoreRight = new Entity(context, context.getImage("scoreright"), Constants.WIDTH - 20f, scoreLeft.y);
+
         closeButton = new Entity(context, context.getImage("close"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
 
         uiCam.position.y = Constants.HEIGHT * 1.5f;
         uiCam.update();
+
+        staticCam = new OrthographicCamera();
+        staticCam.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
 
         updateLeaderboards();
     }
@@ -165,8 +178,8 @@ public class ScoreScreen extends Screen {
         }
 
         if (!ignoreInput && alpha >= 0.5f) {
-            if (Gdx.input.isTouched()) {
-                unproject();
+            if (Gdx.input.isTouched() && page == newPage) {
+                unproject(cam);
                 for (int i = 0; i < replayButtons.length; i++) {
                     if (replayButtons[i].contains(m.x, m.y)) {
                         if (replayData[i] != null) {
@@ -177,6 +190,7 @@ public class ScoreScreen extends Screen {
                         }
                     }
                 }
+                unproject();
                 if (closeButton.contains(m.x, m.y)) {
                     ignoreInput = true;
                     Gdx.input.setInputProcessor(null);
@@ -185,7 +199,28 @@ public class ScoreScreen extends Screen {
                 if (refreshButton.contains(m.x, m.y) && !context.leaderboardsInitialized && !context.leaderboardsRequesting) {
                     context.fetchLeaderboard((success) -> {});
                 }
+                if (scoreLeft.contains(m.x, m.y) && page > 0) newPage--;
+                if (scoreRight.contains(m.x, m.y) && page < PAGES - 1) newPage++;
             }
+        }
+
+        if (page != newPage) {
+            float x = Constants.WIDTH * newPage + Constants.WIDTH / 2f;
+            if (cam.position.x < x) {
+                cam.position.x += 1000 * dt;
+                if (cam.position.x > x) {
+                    cam.position.x = x;
+                    page = newPage;
+                }
+            }
+            if (cam.position.x > x) {
+                cam.position.x -= 1000 * dt;
+                if (cam.position.x < x) {
+                    cam.position.x = x;
+                    page = newPage;
+                }
+            }
+            cam.update();
         }
     }
 
@@ -193,7 +228,7 @@ public class ScoreScreen extends Screen {
     public void render() {
         sb.begin();
 
-        sb.setProjectionMatrix(cam.combined);
+        sb.setProjectionMatrix(staticCam.combined);
         sb.setColor(0, 0, 0, MathUtils.clamp(alpha * 2f, 0f, 0.9f));
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
 
@@ -201,6 +236,9 @@ public class ScoreScreen extends Screen {
         sb.setColor(Color.WHITE);
         sb.draw(bg, 0, 0);
 
+        if (uiCam.position.y <= Constants.HEIGHT / 2f) {
+            sb.setProjectionMatrix(cam.combined);
+        }
         sb.setColor(Color.WHITE);
         for (int i = 0; i < scoreFonts.length; i++) {
             for (int j = 0; j < scoreFonts[0].length; j++) {
@@ -212,7 +250,12 @@ public class ScoreScreen extends Screen {
                 replayButtons[i].render(sb);
             }
         }
+
+        sb.setProjectionMatrix(uiCam.combined);
         closeButton.render(sb);
+
+        scoreLeft.render(sb);
+        scoreRight.render(sb);
 
         if (!context.leaderboardsInitialized) {
             if (context.leaderboardsRequesting) {

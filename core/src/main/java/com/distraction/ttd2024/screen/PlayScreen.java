@@ -48,6 +48,9 @@ public class PlayScreen extends Screen {
     private boolean loading = false;
     private float time;
 
+    private final Entity leaderboardsButton;
+    private boolean fromLeaderboards;
+
     // replay and save
     private FontEntity replayFont;
     private boolean isReplay;
@@ -105,6 +108,8 @@ public class PlayScreen extends Screen {
         submittedFont.setText("Submitted!");
         submittedFont.x = submitButton.x;
         submittedFont.y = submitButton.y - 4;
+
+        leaderboardsButton = new Entity(context, context.getImage("leaderboardsbutton"), Constants.WIDTH / 2f, 30);
     }
 
     private void hit() {
@@ -189,6 +194,14 @@ public class PlayScreen extends Screen {
     }
 
     @Override
+    public void resume() {
+        if (fromLeaderboards) {
+            ignoreInput = false;
+            fromLeaderboards = false;
+        }
+    }
+
+    @Override
     public void update(float dt) {
         tick++;
         time += dt;
@@ -210,8 +223,15 @@ public class PlayScreen extends Screen {
                     out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
                     out.start();
                 }
-                if (done && submitButton.contains(m.x, m.y)) {
-                    submit();
+                if (done) {
+                    if (submitButton.contains(m.x, m.y)) {
+                        submit();
+                    }
+                    if (leaderboardsButton.contains(m.x, m.y)) {
+                        ignoreInput = true;
+                        fromLeaderboards = true;
+                        context.sm.push(new ScoreScreen(context));
+                    }
                 }
             }
 
@@ -345,6 +365,7 @@ public class PlayScreen extends Screen {
                     submittedFont.render(sb);
                 }
             }
+            leaderboardsButton.render(sb);
         }
 
         backButton.render(sb);

@@ -45,6 +45,10 @@ public class Transition {
         start = true;
     }
 
+    public boolean isFinished() {
+        return done;
+    }
+
     public void reset() {
         start = false;
         time = 0;
