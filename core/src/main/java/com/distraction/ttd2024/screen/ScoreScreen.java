@@ -14,6 +14,16 @@ import de.golfgl.gdxgamesvcs.leaderboard.ILeaderBoardEntry;
 
 public class ScoreScreen extends Screen {
 
+    private static final Color GOLD = Color.valueOf("FFF540");
+    private static final Color SILVER = Color.valueOf("C7D4E1");
+    private static final Color BRONZE = Color.valueOf("CF968C");
+    private static final Color LAME = Color.valueOf("928FB8");
+
+
+    private static final int SCORES_PER_PAGE = 8;
+    private static final int PAGES = Context.MAX_SCORES / SCORES_PER_PAGE;
+    private int page;
+
     private final TextureRegion bg;
     private final TextureRegion pixel;
 
@@ -21,6 +31,9 @@ public class ScoreScreen extends Screen {
 
     private final int[][] replayData;
     private final Entity[] replayButtons;
+
+    private final FontEntity fontEntity;
+    private final Entity refreshButton;
 
     private final Entity closeButton;
     private boolean closing;
@@ -58,6 +71,24 @@ public class ScoreScreen extends Screen {
 
             scoreFonts[row][1].setText("");
             scoreFonts[row][2].setText("");
+
+            if (row == 0) {
+                scoreFonts[row][0].setColor(GOLD);
+                scoreFonts[row][1].setColor(GOLD);
+                scoreFonts[row][2].setColor(GOLD);
+            } else if (row == 1) {
+                scoreFonts[row][0].setColor(SILVER);
+                scoreFonts[row][1].setColor(SILVER);
+                scoreFonts[row][2].setColor(SILVER);
+            } else if (row == 2) {
+                scoreFonts[row][0].setColor(BRONZE);
+                scoreFonts[row][1].setColor(BRONZE);
+                scoreFonts[row][2].setColor(BRONZE);
+            } else {
+                scoreFonts[row][0].setColor(LAME);
+                scoreFonts[row][1].setColor(LAME);
+                scoreFonts[row][2].setColor(LAME);
+            }
         }
 
         replayData = new int[Context.MAX_SCORES][];
@@ -65,6 +96,11 @@ public class ScoreScreen extends Screen {
         for (int i = 0; i < replayButtons.length; i++) {
             replayButtons[i] = new Entity(context, context.getImage("replay"), 246, scoreFonts[i][0].y + 1);
         }
+
+        fontEntity = new FontEntity(context, m5Font);
+        fontEntity.x = Constants.WIDTH / 2f;
+        fontEntity.y = Constants.HEIGHT / 2f + 10;
+        refreshButton = new Entity(context, context.getImage("restart"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f - 10);
 
         closeButton = new Entity(context, context.getImage("close"), Constants.WIDTH - 14, Constants.HEIGHT - 15);
 
@@ -146,6 +182,9 @@ public class ScoreScreen extends Screen {
                     Gdx.input.setInputProcessor(null);
                     closing = true;
                 }
+                if (refreshButton.contains(m.x, m.y) && !context.leaderboardsInitialized && !context.leaderboardsRequesting) {
+                    context.fetchLeaderboard((success) -> {});
+                }
             }
         }
     }
@@ -174,6 +213,17 @@ public class ScoreScreen extends Screen {
             }
         }
         closeButton.render(sb);
+
+        if (!context.leaderboardsInitialized) {
+            if (context.leaderboardsRequesting) {
+                fontEntity.setText("Fetching scores...");
+            } else {
+                fontEntity.setText("Error fetching leaderboards.");
+                refreshButton.render(sb);
+            }
+
+            fontEntity.render(sb);
+        }
 
         sb.end();
     }

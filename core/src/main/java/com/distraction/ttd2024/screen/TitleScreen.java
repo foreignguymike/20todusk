@@ -45,7 +45,9 @@ public class TitleScreen extends Screen {
         errorFont.x = Constants.WIDTH / 2f;
         errorFont.y = 5;
 
-        if (!context.leaderboardsInitialized && !context.leaderboardsRequested) {
+        if (!context.leaderboardsInitialized && !context.leaderboardsRequesting) {
+            errorFont.setText("fetching leaderboards...");
+            errorFontTime = 30f;
             context.fetchLeaderboard((success) -> {
                 errorFont.setText(success ? "leaderboards fetched" : "error fetching leaderboards");
                 errorFontTime = 3f;

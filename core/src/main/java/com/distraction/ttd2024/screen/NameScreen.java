@@ -6,6 +6,7 @@ import static com.badlogic.gdx.Input.Keys.BACKSPACE;
 import static com.badlogic.gdx.Input.Keys.C;
 import static com.badlogic.gdx.Input.Keys.D;
 import static com.badlogic.gdx.Input.Keys.E;
+import static com.badlogic.gdx.Input.Keys.ENTER;
 import static com.badlogic.gdx.Input.Keys.F;
 import static com.badlogic.gdx.Input.Keys.G;
 import static com.badlogic.gdx.Input.Keys.H;
@@ -127,11 +128,7 @@ public class NameScreen extends Screen {
                 if (!ignoreInput) {
                     unproject(screenX, screenY);
                     if (submitButton.contains(m.x, m.y, 4, 4)) {
-                        if (validName()) {
-                            ignoreInput = true;
-                            out.start();
-                            Gdx.input.setInputProcessor(null);
-                        }
+                        submitName();
                     }
                 }
                 return true;
@@ -151,21 +148,22 @@ public class NameScreen extends Screen {
                 if (keycode == SHIFT_LEFT || keycode == SHIFT_RIGHT) {
                     shift = true;
                 }
-                if (!context.data.submitted) {
-                    String letter = INPUT_MAP.get(keycode);
-                    if (letter != null) {
-                        if (context.data.name.length() < MAX_CHARS) {
-                            if (shift) context.data.name += letter.toUpperCase();
-                            else context.data.name += letter;
-                            caretTime = 0;
-                        }
+                String letter = INPUT_MAP.get(keycode);
+                if (letter != null) {
+                    if (context.data.name.length() < MAX_CHARS) {
+                        if (shift) context.data.name += letter.toUpperCase();
+                        else context.data.name += letter;
+                        caretTime = 0;
                     }
-                    if (keycode == BACKSPACE) {
-                        if (!context.data.name.isEmpty()) {
-                            context.data.name = context.data.name.substring(0, context.data.name.length() - 1);
-                            caretTime = 0;
-                        }
+                }
+                if (keycode == BACKSPACE) {
+                    if (!context.data.name.isEmpty()) {
+                        context.data.name = context.data.name.substring(0, context.data.name.length() - 1);
+                        caretTime = 0;
                     }
+                }
+                if (keycode == ENTER) {
+                    submitName();
                 }
                 if (context.data.name != null) {
                     nameFont.setText(context.data.name);
@@ -177,6 +175,14 @@ public class NameScreen extends Screen {
 
     private boolean validName() {
         return !context.data.name.isEmpty();
+    }
+
+    private void submitName() {
+        if (validName()) {
+            ignoreInput = true;
+            out.start();
+            Gdx.input.setInputProcessor(null);
+        }
     }
 
     @Override

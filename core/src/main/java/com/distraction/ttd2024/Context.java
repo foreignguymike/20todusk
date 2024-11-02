@@ -34,7 +34,7 @@ public class Context {
 
     public static final int MAX_SCORES = 8;
     public GameJoltClient client;
-    public boolean leaderboardsRequested;
+    public boolean leaderboardsRequesting;
     public boolean leaderboardsInitialized;
     public List<ILeaderBoardEntry> entries = new ArrayList<>();
 
@@ -83,12 +83,11 @@ public class Context {
             return;
         }
         entries.clear();
-        if (leaderboardsRequested) return;
-        leaderboardsRequested = true;
+        if (leaderboardsRequesting) return;
+        leaderboardsRequesting = true;
         client.fetchLeaderboardEntries("", MAX_SCORES, false, leaderBoard -> {
-            System.out.println("FETCHED LEADERBOARDS");
             if (leaderBoard != null) {
-                leaderboardsRequested = false;
+                leaderboardsRequesting = false;
                 leaderboardsInitialized = true;
                 entries.clear();
                 for (int i = 0; i < leaderBoard.size; i++) {
@@ -106,6 +105,7 @@ public class Context {
 
     public boolean isHighscore(int score) {
         if (!leaderboardsInitialized) return false;
+        if (score < 10000) return false;
         return entries.size() < MAX_SCORES || score > Integer.parseInt(entries.get(entries.size() - 1).getFormattedValue());
     }
 
