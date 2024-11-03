@@ -52,6 +52,7 @@ public class PlayScreen extends Screen {
     private boolean fromLeaderboards;
 
     // replay and save
+    private FontEntity nameFont;
     private FontEntity replayFont;
     private boolean isReplay;
     private int[] replay = null;
@@ -60,17 +61,22 @@ public class PlayScreen extends Screen {
     private final boolean[] downs = new boolean[4];
     private int tick;
 
-    public PlayScreen(Context context, int[] replay) {
+    public PlayScreen(Context context, String name, int[] replay) {
         this(context);
         isReplay = true;
         this.replay = replay;
-        replayFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
+        replayFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
         replayFont.setText("REPLAY");
         replayFont.x = Constants.WIDTH / 2f;
         replayFont.y = Constants.HEIGHT - 15;
 
         backButton.x = Constants.WIDTH - 14;
         backButton.y = Constants.HEIGHT - 15;
+
+        nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
+        nameFont.setText("Player: " + name);
+        nameFont.x = Constants.WIDTH / 2f;
+        nameFont.y = 14;
     }
 
     public PlayScreen(Context context) {
@@ -110,6 +116,9 @@ public class PlayScreen extends Screen {
         submittedFont.y = submitButton.y - 4;
 
         leaderboardsButton = new Entity(context, context.getImage("leaderboardsbutton"), Constants.WIDTH / 2f, 30);
+
+        context.audio.stopMusic();
+        context.audio.nextMusic(0.2f, true);
     }
 
     private void hit() {
@@ -216,6 +225,7 @@ public class PlayScreen extends Screen {
                     ignoreInput = true;
                     out.setCallback(() -> context.sm.pop());
                     out.start();
+                    context.audio.stopMusic();
                 }
                 if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;
@@ -284,7 +294,7 @@ public class PlayScreen extends Screen {
                         player.collect(collectable.type);
                         if (collectSoundTime > 0.05f) {
                             collectSoundTime = 0;
-                            float volume = collectable.type == Collectable.Type.TWOX ? 0.5f : 1f;
+                            float volume = collectable.type == Collectable.Type.TWOX ? 1f : 1f;
                             context.audio.playSoundCut(collectable.type.sound, volume);
                         }
                     }
@@ -315,6 +325,7 @@ public class PlayScreen extends Screen {
         // done
         if (!done && player.x >= TOTAL_DISTANCE) {
             done = true;
+            context.audio.stopMusic();
             player.up = player.down = player.left = player.right = false;
             if (isReplay) {
                 out.setCallback(() -> context.sm.pop());
@@ -353,6 +364,7 @@ public class PlayScreen extends Screen {
 
         if (isReplay) {
             replayFont.render(sb);
+            nameFont.render(sb);
         }
 
         if (done && !isReplay) {

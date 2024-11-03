@@ -184,7 +184,7 @@ public class ScoreScreen extends Screen {
                     if (replayButtons[i].contains(m.x, m.y)) {
                         if (replayData[i] != null) {
                             ignoreInput = true;
-                            context.sm.push(new PlayScreen(context, replayData[i]));
+                            context.sm.push(new PlayScreen(context, scoreFonts[i][1].getText(), replayData[i]));
                             context.sm.depth = 1;
                             break;
                         }

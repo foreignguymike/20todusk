@@ -27,6 +27,9 @@ public class AudioHandler {
 
     public AudioHandler() {
         music = new HashMap<>();
+        addMusic("mwj", "music/Mystical Wheelbarrow Journey (loop).ogg");
+        addMusic("box", "music/Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix (loop).ogg");
+        addMusic("cat", "music/Beanmania IIDX (loop).ogg");
 
         sounds = new HashMap<>();
         addSound("soul", "sfx/soul.wav");
@@ -79,6 +82,20 @@ public class AudioHandler {
     }
 
     public void playMusic(String key, float volume, boolean looping) {
+        Music newMusic = music.get(key);
+        if (newMusic == null) {
+            throw new IllegalArgumentException("music does not exist: " + key);
+        }
+        if (currentlyPlaying != null && newMusic != currentlyPlaying.getMusic()) {
+            stopMusic();
+        }
+        currentlyPlaying = new MusicConfig(music.get(key), volume, looping);
+        if (!musicMuted) currentlyPlaying.play();
+    }
+
+    private int index = 0;
+    public void nextMusic(float volume, boolean looping) {
+        String key = music.keySet().toArray(new String[] {})[index++ % music.size()];
         Music newMusic = music.get(key);
         if (newMusic == null) {
             throw new IllegalArgumentException("music does not exist: " + key);

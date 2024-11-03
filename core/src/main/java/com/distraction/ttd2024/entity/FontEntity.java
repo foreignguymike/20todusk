@@ -26,6 +26,10 @@ public class FontEntity extends Entity {
         glyphLayout.setText(font,"");
     }
 
+    public String getText() {
+        return currentText;
+    }
+
     public void setText(String text) {
         if (!Objects.equals(currentText, text)) {
             currentText = text;

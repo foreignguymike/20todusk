@@ -68,6 +68,7 @@ public class TitleScreen extends Screen {
             ignoreInput = false;
             fromLeaderboards = false;
         }
+        context.audio.stopMusic();
     }
 
     @Override
