@@ -1,6 +1,5 @@
 package com.distraction.ttd2024.entity;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.distraction.ttd2024.Animation;
 import com.distraction.ttd2024.Context;

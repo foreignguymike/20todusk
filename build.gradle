@@ -58,7 +58,7 @@ configure(subprojects) {
 
 subprojects {
   version = '$projectVersion'
-  ext.appName = '20ToDusk'
+  ext.appName = 'Twilight Run'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
@@ -70,4 +70,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = '20ToDusk' + '-parent'
+eclipse.project.name = 'Twilight Run' + '-parent'

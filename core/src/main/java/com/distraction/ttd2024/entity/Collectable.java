@@ -14,8 +14,8 @@ public class Collectable extends Entity {
         TWOX(0, "2x"),
         SPIKE(0, "hit");
 
-        public int points;
-        public String sound;
+        public final int points;
+        public final String sound;
 
         Type(int points, String sound) {
             this.points = points;

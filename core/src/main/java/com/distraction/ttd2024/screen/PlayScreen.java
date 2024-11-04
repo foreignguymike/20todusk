@@ -294,8 +294,7 @@ public class PlayScreen extends Screen {
                         player.collect(collectable.type);
                         if (collectSoundTime > 0.05f) {
                             collectSoundTime = 0;
-                            float volume = collectable.type == Collectable.Type.TWOX ? 1f : 1f;
-                            context.audio.playSoundCut(collectable.type.sound, volume);
+                            context.audio.playSoundCut(collectable.type.sound, 1f);
                         }
                     }
                 }
@@ -325,7 +324,7 @@ public class PlayScreen extends Screen {
         // done
         if (!done && player.x >= TOTAL_DISTANCE) {
             done = true;
-            context.audio.stopMusic();
+//            context.audio.stopMusic();
             player.up = player.down = player.left = player.right = false;
             if (isReplay) {
                 out.setCallback(() -> context.sm.pop());

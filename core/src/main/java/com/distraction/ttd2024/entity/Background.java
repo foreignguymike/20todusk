@@ -12,7 +12,7 @@ public class Background extends Entity {
     private static final Color BG = Color.valueOf("D46453");
 
     private final Player player;
-    private float totalDistance;
+    private final float totalDistance;
 
     private final TextureRegion[] images;
     private final float[] parallax = new float[]{26f, 18f, 10f, 1f};
@@ -53,9 +53,9 @@ public class Background extends Entity {
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
         for (int i = 0; i < images.length; i++) {
             sb.setColor(Color.WHITE);
-            sb.draw(images[i], xs[i], heights[i]);
-            sb.draw(images[i], xs[i] + w, heights[i]);
-            sb.draw(images[i], xs[i] + 2 * w, heights[i]);
+            sb.draw(images[i], xs[i], heights[i], images[i].getRegionWidth() + 0.5f, images[i].getRegionHeight());
+            sb.draw(images[i], xs[i] + w, heights[i], images[i].getRegionWidth() + 0.5f, images[i].getRegionHeight());
+            sb.draw(images[i], xs[i] + 2 * w, heights[i], images[i].getRegionWidth() + 0.5f, images[i].getRegionHeight());
             sb.setColor(colors[i]);
             sb.draw(pixel, 0, 0, Constants.WIDTH, heights[i]);
         }

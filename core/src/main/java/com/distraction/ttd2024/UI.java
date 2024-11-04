@@ -23,7 +23,6 @@ public class UI {
     private final float my;
     private final float mw;
     private final float mh;
-    private float md;
 
     private final FontEntity font;
 
@@ -56,7 +55,7 @@ public class UI {
     }
 
     public void render(SpriteBatch sb) {
-        md = (mw - 2) * MathUtils.clamp(currentDistance / totalDistance, 0, 1);
+        float md = (mw - 2) * MathUtils.clamp(currentDistance / totalDistance, 0, 1);
 
         sb.setColor(Color.WHITE);
         sb.draw(meter, mx, my);

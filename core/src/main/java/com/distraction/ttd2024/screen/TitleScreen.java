@@ -81,11 +81,11 @@ public class TitleScreen extends Screen {
             else if (scoresButton.contains(m.x, m.y, 3, 3)) arrow.y = scoresButton.y;
             else arrow.y = -100;
             if (Gdx.input.isTouched()) {
-                if (playButton.contains(m.x, m.y)) {
+                if (playButton.contains(m.x, m.y, 3, 3)) {
                     ignoreInput = true;
                     context.data.reset();
                     out.start();
-                } else if (scoresButton.contains(m.x, m.y)) {
+                } else if (scoresButton.contains(m.x, m.y, 3, 3)) {
                     ignoreInput = true;
                     context.data.reset();
                     fromLeaderboards = true;

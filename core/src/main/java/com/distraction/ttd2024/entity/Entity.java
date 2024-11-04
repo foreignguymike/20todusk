@@ -1,6 +1,5 @@
 package com.distraction.ttd2024.entity;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Animation;
@@ -60,10 +59,6 @@ public class Entity {
             && this.x + this.w / 2 > x - w / 2
             && this.y - this.h / 2 < y + h / 2
             && this.y + this.h / 2 > y - h / 2;
-    }
-
-    public boolean overlaps(Entity o) {
-        return overlaps(o.x, o.y, o.w, o.h);
     }
 
     public void update(float dt) {

@@ -17,7 +17,6 @@ public class Transition {
         FLASH_OUT
     }
 
-    private final Context context;
     private final Type type;
     private final float duration;
     private SimpleCallback callback;
@@ -29,7 +28,6 @@ public class Transition {
     private boolean done;
 
     public Transition(Context context, Type type, float duration, SimpleCallback callback) {
-        this.context = context;
         this.type = type;
         this.duration = duration;
         this.callback = callback;

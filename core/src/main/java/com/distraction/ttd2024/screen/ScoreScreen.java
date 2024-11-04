@@ -44,7 +44,7 @@ public class ScoreScreen extends Screen {
     private boolean closing;
 
     private float alpha;
-    private OrthographicCamera staticCam;
+    private final OrthographicCamera staticCam;
 
     protected ScoreScreen(Context context) {
         super(context);
