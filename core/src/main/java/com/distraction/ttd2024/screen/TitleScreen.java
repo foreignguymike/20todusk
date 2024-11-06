@@ -10,12 +10,20 @@ import com.distraction.ttd2024.entity.FontEntity;
 
 public class TitleScreen extends Screen {
 
-    private final TextureRegion bg;
+    private static final Color BG_COLOR1 = Color.valueOf("8F5765");
+    private static final Color BG_COLOR2 = Color.valueOf("CF968C");
+
+    private final TextureRegion bg1;
+    private final TextureRegion bg2;
+    private final TextureRegion title;
     private final Entity playButton;
     private final Entity scoresButton;
     private final Entity arrow;
 
     private final FontEntity playerFont;
+    private final FontEntity engineFont;
+    private final FontEntity creditsFont;
+    private final FontEntity versionFont;
 
     private final FontEntity errorFont;
     private float errorFontTime;
@@ -26,7 +34,9 @@ public class TitleScreen extends Screen {
     public TitleScreen(Context context) {
         super(context);
 
-        bg = context.getImage("title");
+        bg1 = context.getImage("titlebg1");
+        bg2 = context.getImage("titlebg2");
+        title = context.getImage("title");
         playButton = new Entity(context, context.getImage("play"), 250, 80);
         scoresButton = new Entity(context, context.getImage("scores"), 266, 55);
         arrow = new Entity(context, context.getImage("menuarrow"), 216, -100);
@@ -35,11 +45,13 @@ public class TitleScreen extends Screen {
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.push(new PlayScreen(context)));
 
-        playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        playerFont.setText("Player: " + context.data.name);
+        playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "Player: " + context.data.name, 5, Constants.HEIGHT - 10);
         playerFont.center = false;
-        playerFont.x = 5;
-        playerFont.y = Constants.HEIGHT - 10;
+        engineFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "libGDX", 4, 15);
+        engineFont.center = false;
+        creditsFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "mike 2024", 4, 5);
+        creditsFont.center = false;
+        versionFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 20, 5);
 
         errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
         errorFont.x = Constants.WIDTH / 2f;
@@ -104,12 +116,24 @@ public class TitleScreen extends Screen {
     public void render() {
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
+
+        sb.setColor(BG_COLOR1);
+        sb.draw(pixel, 0, 0, Constants.WIDTH, 23);
+        sb.draw(pixel, 0, Constants.HEIGHT - 23, Constants.WIDTH, 23);
+        sb.setColor(BG_COLOR2);
+        sb.draw(pixel, 0, 39, Constants.WIDTH, 102);
         sb.setColor(Color.WHITE);
-        sb.draw(bg, 0, 0);
+        sb.draw(bg1, 0, Constants.HEIGHT - 39);
+        sb.draw(bg2, 0, 23);
+        sb.draw(title, 19, 30);
+
         playButton.render(sb);
         scoresButton.render(sb);
         arrow.render(sb);
         playerFont.render(sb);
+        engineFont.render(sb);
+        creditsFont.render(sb);
+        versionFont.render(sb);
         if (errorFontTime > 0) {
             errorFont.render(sb);
         }

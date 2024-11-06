@@ -2,11 +2,14 @@ package com.distraction.ttd2024;
 
 public class Constants {
 
+    public static final int VERSION = 1;
+    public static final String VERSION_STRING = "v" + VERSION + ".0.0";
+
     public static final String TITLE = "Twilight Run";
 
     public static final int WIDTH = 320;
     public static final int HEIGHT = 180;
-    public static final int SCALE = 4;
+    public static final int SCALE = 3;
     public static final int SWIDTH = WIDTH * SCALE;
     public static final int SHEIGHT = HEIGHT * SCALE;
 
@@ -20,9 +23,9 @@ public class Constants {
 
     // not for you
     static {
-//        APP_ID = ApiConstants.APP_ID;
-//        API_KEY = ApiConstants.API_KEY;
-//        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
+        APP_ID = ApiConstants.APP_ID;
+        API_KEY = ApiConstants.API_KEY;
+        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
     }
 
 }

@@ -117,8 +117,9 @@ public class PlayScreen extends Screen {
 
         leaderboardsButton = new Entity(context, context.getImage("leaderboardsbutton"), Constants.WIDTH / 2f, 30);
 
-        context.audio.stopMusic();
-        context.audio.nextMusic(0.2f, true);
+        if (!context.audio.isMusicPlaying()) {
+            context.audio.nextMusic(0.2f, true);
+        }
     }
 
     private void hit() {
@@ -202,6 +203,15 @@ public class PlayScreen extends Screen {
         return ret.toString();
     }
 
+    private void restart() {
+        context.data.reset();
+        out.setCallback(() -> {
+            context.data.reset();
+            context.sm.replace(new PlayScreen(context));
+        });
+        out.start();
+    }
+
     @Override
     public void resume() {
         if (fromLeaderboards) {
@@ -225,16 +235,10 @@ public class PlayScreen extends Screen {
                     ignoreInput = true;
                     out.setCallback(() -> context.sm.pop());
                     out.start();
-                    context.audio.stopMusic();
                 }
                 if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;
-                    context.data.reset();
-                    out.setCallback(() -> {
-                        context.data.reset();
-                        context.sm.replace(new PlayScreen(context));
-                    });
-                    out.start();
+                    restart();
                 }
                 if (done) {
                     if (submitButton.contains(m.x, m.y)) {
@@ -246,6 +250,14 @@ public class PlayScreen extends Screen {
                         context.sm.push(new ScoreScreen(context));
                     }
                 }
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+                ignoreInput = true;
+                restart();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+                context.audio.nextMusic(0.2f, true);
             }
 
             if (!done) {
@@ -324,7 +336,6 @@ public class PlayScreen extends Screen {
         // done
         if (!done && player.x >= TOTAL_DISTANCE) {
             done = true;
-//            context.audio.stopMusic();
             player.up = player.down = player.left = player.right = false;
             if (isReplay) {
                 out.setCallback(() -> context.sm.pop());

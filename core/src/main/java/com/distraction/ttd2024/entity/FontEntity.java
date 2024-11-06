@@ -26,6 +26,15 @@ public class FontEntity extends Entity {
         glyphLayout.setText(font,"");
     }
 
+    public FontEntity(Context context, BitmapFont font, String text, float x, float y) {
+        super(context);
+        this.font = font;
+        glyphLayout = new GlyphLayout();
+        setText(text);
+        this.x = x;
+        this.y = y;
+    }
+
     public String getText() {
         return currentText;
     }

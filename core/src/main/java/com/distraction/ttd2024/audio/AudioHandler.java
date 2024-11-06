@@ -82,6 +82,12 @@ public class AudioHandler {
         }
     }
 
+    public boolean isMusicPlaying() {
+        if (currentlyPlaying == null) return false;
+        if (currentlyPlaying.getMusic() == null) return false;
+        return currentlyPlaying.getMusic().isPlaying();
+    }
+
     public void playMusic(String key, float volume, boolean looping) {
         Music newMusic = music.get(key);
         if (newMusic == null) {
