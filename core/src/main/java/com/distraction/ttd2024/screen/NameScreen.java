@@ -45,6 +45,7 @@ import static com.badlogic.gdx.Input.Keys.Z;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.ttd2024.Constants;
 import com.distraction.ttd2024.Context;
 import com.distraction.ttd2024.entity.Entity;
@@ -97,7 +98,11 @@ public class NameScreen extends Screen {
         put(SPACE, " ");
     }};
 
+    private static final Color BG = Color.valueOf("262733");
+
     private boolean shift = false;
+
+    private final TextureRegion pixel;
 
     private final FontEntity enterNameFont;
     private final FontEntity nameFont;
@@ -107,6 +112,7 @@ public class NameScreen extends Screen {
 
     public NameScreen(Context context) {
         super(context);
+        pixel = context.getPixel();
 
         enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
         enterNameFont.setText("Enter Name");
@@ -195,6 +201,10 @@ public class NameScreen extends Screen {
     public void render() {
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
+
+        sb.setColor(BG);
+        sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+
         sb.setColor(Color.WHITE);
         enterNameFont.render(sb);
         nameFont.render(sb);
