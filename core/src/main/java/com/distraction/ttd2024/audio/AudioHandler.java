@@ -31,6 +31,7 @@ public class AudioHandler {
         addMusic("box", "music/Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix (loop).ogg");
         addMusic("cat", "music/Beanmania IIDX (loop).ogg");
         addMusic("catprince", "music/Neko Prince - SUMMER DIARY Original rough demo version (cut).ogg");
+        addMusic("ran", "music/Ran.ogg");
 
         sounds = new HashMap<>();
         addSound("soul", "sfx/soul.wav");

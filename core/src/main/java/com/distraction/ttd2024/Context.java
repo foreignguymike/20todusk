@@ -103,10 +103,21 @@ public class Context {
         client.submitToLeaderboard("", score, metadata, 10000, listener);
     }
 
-    public boolean isHighscore(int score) {
+    public boolean isHighscore(String name, int score) {
         if (!leaderboardsInitialized) return false;
         if (score < 10000) return false;
-        return entries.size() < MAX_SCORES || score > Integer.parseInt(entries.get(entries.size() - 1).getFormattedValue());
+        ILeaderBoardEntry existingEntry = null;
+        for (ILeaderBoardEntry entry : entries) {
+            if (entry.getUserDisplayName().equals(name)) {
+                existingEntry = entry;
+                break;
+            }
+        }
+        if (existingEntry != null) {
+            return score > Integer.parseInt(existingEntry.getFormattedValue());
+        } else {
+            return entries.size() < MAX_SCORES || score > Integer.parseInt(entries.get(entries.size() - 1).getFormattedValue());
+        }
     }
 
     public void dispose() {

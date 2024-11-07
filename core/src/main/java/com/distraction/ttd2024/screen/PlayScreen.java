@@ -61,6 +61,9 @@ public class PlayScreen extends Screen {
     private final boolean[] downs = new boolean[4];
     private int tick;
 
+    // music next (to handle skips)
+    private boolean musicKeyDown;
+
     public PlayScreen(Context context, String name, int[] replay) {
         this(context);
         isReplay = true;
@@ -256,9 +259,11 @@ public class PlayScreen extends Screen {
                 ignoreInput = true;
                 restart();
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.M) && !musicKeyDown) {
+                musicKeyDown = true;
                 context.audio.nextMusic(0.2f, true);
             }
+            if (!Gdx.input.isKeyPressed(Input.Keys.M)) musicKeyDown = false;
 
             if (!done) {
                 boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -341,7 +346,7 @@ public class PlayScreen extends Screen {
                 out.setCallback(() -> context.sm.pop());
                 out.start();
             }
-            if (context.isHighscore(player.score)) {
+            if (context.isHighscore(context.data.name, player.score)) {
                 doneText.setText("HIGH SCORE!");
                 context.data.set(player.score, save);
             } else {
@@ -384,12 +389,13 @@ public class PlayScreen extends Screen {
             sb.setColor(Color.WHITE);
             doneText.render(sb);
 
-            if (context.isHighscore(player.score)) {
+            if (context.isHighscore(context.data.name, player.score)) {
                 if (!context.data.submitted) {
                     submitButton.render(sb);
-                } else {
-                    submittedFont.render(sb);
                 }
+            }
+            if (context.data.submitted) {
+                submittedFont.render(sb);
             }
             leaderboardsButton.render(sb);
         }
