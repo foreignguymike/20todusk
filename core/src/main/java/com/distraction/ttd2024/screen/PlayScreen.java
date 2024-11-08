@@ -266,10 +266,10 @@ public class PlayScreen extends Screen {
             if (!Gdx.input.isKeyPressed(Input.Keys.M)) musicKeyDown = false;
 
             if (!done) {
-                boolean up = Gdx.input.isKeyPressed(Input.Keys.UP);
-                boolean down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-                boolean left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-                boolean right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+                boolean up = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W);
+                boolean down = Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S);
+                boolean left = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
+                boolean right = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
                 if (isReplay) {
                     checkReplay(tick);
                     player.up = downs[0];
