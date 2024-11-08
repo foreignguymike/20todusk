@@ -27,11 +27,7 @@ public class AudioHandler {
 
     public AudioHandler() {
         music = new HashMap<>();
-        addMusic("mwj", "music/Mystical Wheelbarrow Journey (loop).ogg");
-        addMusic("box", "music/Da Box of Kardboard Too (feat Naoki vs ZigZag) - TaroNuke Remix (loop).ogg");
-        addMusic("cat", "music/Beanmania IIDX (loop).ogg");
-        addMusic("catprince", "music/Neko Prince - SUMMER DIARY Original rough demo version (cut).ogg");
-        addMusic("ran", "music/Ran.ogg");
+        addMusic("bg", "music/darksideoffate.ogg");
 
         sounds = new HashMap<>();
         addSound("soul", "sfx/soul.wav");
