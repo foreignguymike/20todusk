@@ -151,6 +151,11 @@ public class ScoreScreen extends Screen {
     public void resume() {
         ignoreInput = false;
         context.sm.depth = 2;
+
+        // in title screen
+        if (context.data.score == 0) {
+            context.audio.stopMusic();
+        }
     }
 
     @Override

@@ -97,20 +97,6 @@ public class AudioHandler {
         if (!musicMuted) currentlyPlaying.play();
     }
 
-    private int index = 0;
-    public void nextMusic(float volume, boolean looping) {
-        String key = music.keySet().toArray(new String[] {})[index++ % music.size()];
-        Music newMusic = music.get(key);
-        if (newMusic == null) {
-            throw new IllegalArgumentException("music does not exist: " + key);
-        }
-        if (currentlyPlaying != null && newMusic != currentlyPlaying.getMusic()) {
-            stopMusic();
-        }
-        currentlyPlaying = new MusicConfig(music.get(key), volume, looping);
-        if (!musicMuted) currentlyPlaying.play();
-    }
-
     public void stopMusic() {
         if (currentlyPlaying != null) {
             currentlyPlaying.stop();

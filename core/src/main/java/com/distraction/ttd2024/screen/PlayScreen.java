@@ -61,9 +61,6 @@ public class PlayScreen extends Screen {
     private final boolean[] downs = new boolean[4];
     private int tick;
 
-    // music next (to handle skips)
-    private boolean musicKeyDown;
-
     public PlayScreen(Context context, String name, int[] replay) {
         this(context);
         isReplay = true;
@@ -121,7 +118,7 @@ public class PlayScreen extends Screen {
         leaderboardsButton = new Entity(context, context.getImage("leaderboardsbutton"), Constants.WIDTH / 2f, 30);
 
         if (!context.audio.isMusicPlaying()) {
-            context.audio.nextMusic(0.2f, true);
+            context.audio.playMusic("bg", 0.2f, true);
         }
     }
 
@@ -259,11 +256,6 @@ public class PlayScreen extends Screen {
                 ignoreInput = true;
                 restart();
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.M) && !musicKeyDown) {
-                musicKeyDown = true;
-                context.audio.nextMusic(0.2f, true);
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.M)) musicKeyDown = false;
 
             if (!done) {
                 boolean up = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W);
@@ -346,7 +338,7 @@ public class PlayScreen extends Screen {
                 out.setCallback(() -> context.sm.pop());
                 out.start();
             }
-            if (context.isHighscore(context.data.name, player.score)) {
+            if (!isReplay && context.isHighscore(context.data.name, player.score)) {
                 doneText.setText("HIGH SCORE!");
                 context.data.set(player.score, save);
             } else {
