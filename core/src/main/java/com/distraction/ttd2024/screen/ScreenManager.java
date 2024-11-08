@@ -12,6 +12,10 @@ public class ScreenManager {
         screens = new Stack<>();
     }
 
+    public int size() {
+        return screens.size();
+    }
+
     public void push(Screen s) {
         if (!screens.isEmpty()) peek().pause();
         screens.push(s);

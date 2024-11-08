@@ -153,7 +153,7 @@ public class ScoreScreen extends Screen {
         context.sm.depth = 2;
 
         // in title screen
-        if (context.data.score == 0) {
+        if (context.sm.size() == 2) {
             context.audio.stopMusic();
         }
     }
