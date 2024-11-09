@@ -121,6 +121,8 @@ public class ScoreScreen extends Screen {
         staticCam.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
 
         updateLeaderboards();
+
+        context.audio.playSound("grave", 0.7f);
     }
 
     private void updateLeaderboards() {
@@ -191,6 +193,7 @@ public class ScoreScreen extends Screen {
                             ignoreInput = true;
                             context.sm.push(new PlayScreen(context, scoreFonts[i][1].getText(), replayData[i]));
                             context.sm.depth = 1;
+                            context.audio.playSound("select");
                             break;
                         }
                     }
@@ -204,8 +207,14 @@ public class ScoreScreen extends Screen {
                 if (refreshButton.contains(m.x, m.y) && !context.leaderboardsInitialized && !context.leaderboardsRequesting) {
                     context.fetchLeaderboard((success) -> {});
                 }
-                if (scoreLeft.contains(m.x, m.y) && page > 0) newPage--;
-                if (scoreRight.contains(m.x, m.y) && page < PAGES - 1) newPage++;
+                if (scoreLeft.contains(m.x, m.y) && page > 0) {
+                    newPage--;
+                    context.audio.playSound("shift");
+                }
+                if (scoreRight.contains(m.x, m.y) && page < PAGES - 1) {
+                    newPage++;
+                    context.audio.playSound("shift");
+                }
             }
         }
 

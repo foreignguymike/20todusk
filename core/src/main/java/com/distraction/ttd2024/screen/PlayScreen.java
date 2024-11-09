@@ -164,6 +164,7 @@ public class PlayScreen extends Screen {
         if (context.data.submitted) return;
         if (loading) return;
         loading = true;
+        context.audio.playSound("submit");
         context.submitScore(context.data.name, context.data.score, serializeSave(context.data.save), new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -210,6 +211,7 @@ public class PlayScreen extends Screen {
             context.sm.replace(new PlayScreen(context));
         });
         out.start();
+        context.audio.playSound("select");
     }
 
     @Override
@@ -235,6 +237,7 @@ public class PlayScreen extends Screen {
                     ignoreInput = true;
                     out.setCallback(() -> context.sm.pop());
                     out.start();
+                    context.audio.playSound("select");
                 }
                 if (!isReplay && restartButton.contains(m.x, m.y)) {
                     ignoreInput = true;

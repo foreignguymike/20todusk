@@ -30,9 +30,13 @@ public class AudioHandler {
         addMusic("bg", "music/darksideoffate.ogg");
 
         sounds = new HashMap<>();
+        addSound("select", "sfx/select.wav");
+        addSound("grave", "sfx/grave.wav");
+        addSound("shift", "sfx/shift.wav");
         addSound("soul", "sfx/soul.wav");
         addSound("hit", "sfx/hit.wav");
         addSound("2x", "sfx/2x.wav");
+        addSound("submit", "sfx/submit.wav");
     }
 
     private void addMusic(String key, String fileName) {
@@ -106,6 +110,10 @@ public class AudioHandler {
 
     public void playSound(String key) {
         playSound(key, 1, false);
+    }
+
+    public void playSound(String key, float volume) {
+        playSound(key, volume, false);
     }
 
     public void playSoundCut(String key) {

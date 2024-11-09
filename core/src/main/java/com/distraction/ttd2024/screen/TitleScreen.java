@@ -97,6 +97,7 @@ public class TitleScreen extends Screen {
                     ignoreInput = true;
                     context.data.reset();
                     out.start();
+                    context.audio.playSound("select");
                 } else if (scoresButton.contains(m.x, m.y, 3, 3)) {
                     ignoreInput = true;
                     context.data.reset();
@@ -106,6 +107,7 @@ public class TitleScreen extends Screen {
                     ignoreInput = true;
                     out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new NameScreen(context)));
                     out.start();
+                    context.audio.playSound("select");
                 }
             }
         }

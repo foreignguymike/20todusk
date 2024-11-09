@@ -188,6 +188,7 @@ public class NameScreen extends Screen {
             ignoreInput = true;
             out.start();
             Gdx.input.setInputProcessor(null);
+            context.audio.playSound("select");
         }
     }
 
