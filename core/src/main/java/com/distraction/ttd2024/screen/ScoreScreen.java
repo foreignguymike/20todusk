@@ -162,6 +162,7 @@ public class ScoreScreen extends Screen {
 
     @Override
     public void update(float dt) {
+        if (out != null) out.update(dt);
         if (!closing) {
             alpha += dt;
             if (alpha > 0.5f) alpha = 0.5f;
@@ -191,8 +192,13 @@ public class ScoreScreen extends Screen {
                     if (replayButtons[i].contains(m.x, m.y)) {
                         if (replayData[i] != null) {
                             ignoreInput = true;
-                            context.sm.push(new PlayScreen(context, scoreFonts[i][1].getText(), replayData[i]));
-                            context.sm.depth = 1;
+                            final String text = scoreFonts[i][1].getText();
+                            final int[] replay = replayData[i];
+                            out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> {
+                                context.sm.push(new PlayScreen(context, text, replay));
+                                context.sm.depth = 1;
+                            });
+                            out.start();
                             context.audio.playSound("select");
                             break;
                         }
@@ -281,6 +287,8 @@ public class ScoreScreen extends Screen {
 
             fontEntity.render(sb);
         }
+
+        if (out != null) out.render(sb);
 
         sb.end();
     }
