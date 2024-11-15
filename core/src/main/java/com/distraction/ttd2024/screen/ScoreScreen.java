@@ -58,26 +58,11 @@ public class ScoreScreen extends Screen {
         scoreFonts = new FontEntity[Context.MAX_SCORES][3];
         for (int row = 0; row < scoreFonts.length; row++) {
             int page = row / SCORES_PER_PAGE;
-            scoreFonts[row][0] = new FontEntity(context, m5Font);
-            scoreFonts[row][0].center = true;
-            scoreFonts[row][0].x = Constants.WIDTH * page + 50;
-            scoreFonts[row][0].y = Constants.HEIGHT - 59 - (row % SCORES_PER_PAGE) * 16;
-            scoreFonts[row][0].setText((row + 1) + "");
+            scoreFonts[row][0] = new FontEntity(context, m5Font, (row + 1) + "", Constants.WIDTH * page + 50, Constants.HEIGHT - 59 - (row % SCORES_PER_PAGE) * 16, FontEntity.Alignment.CENTER);
         }
         for (int row = 0; row < scoreFonts.length; row++) {
-            scoreFonts[row][1] = new FontEntity(context, m5Font);
-            scoreFonts[row][2] = new FontEntity(context, m5Font);
-
-            scoreFonts[row][1].center = false;
-            scoreFonts[row][2].center = false;
-
-            scoreFonts[row][1].x = scoreFonts[row][0].x + 10;
-            scoreFonts[row][1].y = scoreFonts[row][0].y;
-            scoreFonts[row][2].x = scoreFonts[row][0].x + 117;
-            scoreFonts[row][2].y = scoreFonts[row][0].y;
-
-            scoreFonts[row][1].setText("");
-            scoreFonts[row][2].setText("");
+            scoreFonts[row][1] = new FontEntity(context, m5Font, "", scoreFonts[row][0].x + 10, scoreFonts[row][0].y);
+            scoreFonts[row][2] = new FontEntity(context, m5Font, "", scoreFonts[row][0].x + 117, scoreFonts[row][0].y);
 
             if (row == 0) {
                 scoreFonts[row][0].setColor(GOLD);
@@ -104,9 +89,7 @@ public class ScoreScreen extends Screen {
             replayButtons[i] = new Entity(context, context.getImage("replay"), scoreFonts[i][0].x + 196, scoreFonts[i][0].y + 1);
         }
 
-        fontEntity = new FontEntity(context, m5Font);
-        fontEntity.x = Constants.WIDTH / 2f;
-        fontEntity.y = Constants.HEIGHT / 2f + 10;
+        fontEntity = new FontEntity(context, m5Font, "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 10, FontEntity.Alignment.CENTER);
         refreshButton = new Entity(context, context.getImage("restart"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f - 10);
 
         scoreLeft = new Entity(context, context.getImage("scoreleft"), 20, Constants.HEIGHT / 2f - 30);

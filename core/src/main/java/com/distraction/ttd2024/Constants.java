@@ -2,8 +2,8 @@ package com.distraction.ttd2024;
 
 public class Constants {
 
-    public static final int VERSION = 1;
-    public static final String VERSION_STRING = "v" + VERSION + ".0.0";
+    public static final String VERSION = "0.9";
+    public static final String VERSION_STRING = "v" + VERSION;
 
     public static final String TITLE = "Twilight Run";
 
@@ -23,9 +23,9 @@ public class Constants {
 
     // not for you
     static {
-        APP_ID = ApiConstants.APP_ID;
-        API_KEY = ApiConstants.API_KEY;
-        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
+//        APP_ID = ApiConstants.APP_ID;
+//        API_KEY = ApiConstants.API_KEY;
+//        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
     }
 
 }

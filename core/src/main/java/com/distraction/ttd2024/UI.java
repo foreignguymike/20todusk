@@ -41,11 +41,7 @@ public class UI {
         mx = (Constants.WIDTH - mw) / 2f;
         my = 4f;
 
-        font = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
-        font.setText("0");
-        font.center = false;
-        font.x = 5;
-        font.y = Constants.HEIGHT - 15;
+        font = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20), "0", 5, Constants.HEIGHT - 15);
 
         twox = context.getImage("2x");
     }

@@ -114,16 +114,8 @@ public class NameScreen extends Screen {
         super(context);
         pixel = context.getPixel();
 
-        enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
-        enterNameFont.setText("Enter Name");
-        enterNameFont.center = true;
-        enterNameFont.x = Constants.WIDTH / 2f;
-        enterNameFont.y = Constants.HEIGHT / 2f + 20;
-        nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        nameFont.setText(context.data.name);
-        nameFont.center = true;
-        nameFont.x = Constants.WIDTH / 2f;
-        nameFont.y = Constants.HEIGHT / 2f - 10;
+        enterNameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20), "Enter Name", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 20, FontEntity.Alignment.CENTER);
+        nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), context.data.name, Constants.WIDTH / 2f, Constants.HEIGHT / 2f - 10, FontEntity.Alignment.CENTER);
         submitButton = new Entity(context, context.getImage("submit"), Constants.WIDTH / 2f, 50);
 
         out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new TitleScreen(context)));

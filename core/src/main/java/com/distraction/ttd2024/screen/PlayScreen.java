@@ -65,18 +65,11 @@ public class PlayScreen extends Screen {
         this(context);
         isReplay = true;
         this.replay = replay;
-        replayFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        replayFont.setText("REPLAY");
-        replayFont.x = Constants.WIDTH / 2f;
-        replayFont.y = Constants.HEIGHT - 15;
+        replayFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "REPLAY", Constants.WIDTH / 2f, Constants.HEIGHT - 15, FontEntity.Alignment.CENTER);
+        nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "Player: " + name, Constants.WIDTH / 2f, 14, FontEntity.Alignment.CENTER);
 
         backButton.x = Constants.WIDTH - 14;
         backButton.y = Constants.HEIGHT - 15;
-
-        nameFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        nameFont.setText("Player: " + name);
-        nameFont.x = Constants.WIDTH / 2f;
-        nameFont.y = 14;
     }
 
     public PlayScreen(Context context) {
@@ -106,14 +99,8 @@ public class PlayScreen extends Screen {
         in.start();
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
 
-        doneText = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20));
-        doneText.x = Constants.WIDTH / 2f;
-        doneText.y = Constants.HEIGHT / 2f;
-
-        submittedFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        submittedFont.setText("Submitted!");
-        submittedFont.x = submitButton.x;
-        submittedFont.y = submitButton.y - 4;
+        doneText = new FontEntity(context, context.getFont(Context.FONT_NAME_VCR20), "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f, FontEntity.Alignment.CENTER);
+        submittedFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "Submitted!", submitButton.x, submitButton.y - 4, FontEntity.Alignment.CENTER);
 
         leaderboardsButton = new Entity(context, context.getImage("leaderboardsbutton"), Constants.WIDTH / 2f, 30);
 

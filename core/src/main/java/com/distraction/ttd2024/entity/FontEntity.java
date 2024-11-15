@@ -11,10 +11,16 @@ import java.util.Objects;
 
 public class FontEntity extends Entity {
 
+    public enum Alignment {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
     private final GlyphLayout glyphLayout;
     private final BitmapFont font;
 
-    public boolean center = true;
+    public Alignment alignment = Alignment.LEFT;
 
     private String currentText = "";
     private Color color = Color.WHITE;
@@ -24,6 +30,11 @@ public class FontEntity extends Entity {
         this.font = font;
         glyphLayout = new GlyphLayout();
         glyphLayout.setText(font,"");
+    }
+
+    public FontEntity(Context context, BitmapFont font, String text, float x, float y, Alignment alignment) {
+        this(context, font, text, x, y);
+        this.alignment = alignment;
     }
 
     public FontEntity(Context context, BitmapFont font, String text, float x, float y) {
@@ -57,20 +68,20 @@ public class FontEntity extends Entity {
 
     @Override
     public boolean contains(float x, float y, float px, float py) {
-        if (center) return super.contains(x, y, px, py);
-        else return x > this.x - px
-            && x < this.x + w + px
-            && y > this.y - h / 2 - py
-            && y < this.y + h / 2 + py;
+        if (alignment == Alignment.CENTER) return super.contains(x, y, px, py);
+        else if (alignment == Alignment.LEFT) return super.contains(x - w / 2, y, px, py);
+        else return super.contains(x + w / 2 + 1, y, px, py);
     }
 
     @Override
     public void render(SpriteBatch sb) {
         if (currentText.isEmpty()) return;
-        if (center) {
+        if (alignment == Alignment.CENTER) {
             font.draw(sb, glyphLayout, x - glyphLayout.width / 2f, y + glyphLayout.height / 2f);
-        } else {
+        } else if (alignment == Alignment.LEFT) {
             font.draw(sb, glyphLayout, x, y + glyphLayout.height / 2f);
+        } else {
+            font.draw(sb, glyphLayout, x - w + 1, y + glyphLayout.height / 2f);
         }
     }
 

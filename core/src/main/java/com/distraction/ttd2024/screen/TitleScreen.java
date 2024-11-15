@@ -24,6 +24,8 @@ public class TitleScreen extends Screen {
     private final FontEntity engineFont;
     private final FontEntity creditsFont;
     private final FontEntity versionFont;
+    private final FontEntity versionFont2;
+    private final FontEntity versionFont3;
 
     private final FontEntity errorFont;
     private float errorFontTime;
@@ -46,16 +48,13 @@ public class TitleScreen extends Screen {
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.push(new PlayScreen(context)));
 
         playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "Player: " + context.data.name, 5, Constants.HEIGHT - 10);
-        playerFont.center = false;
         engineFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "libGDX", 4, 15);
-        engineFont.center = false;
-        creditsFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "mike 2024", 4, 5);
-        creditsFont.center = false;
-        versionFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 20, 5);
+        creditsFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "mike", 4, 5);
+        versionFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 15, FontEntity.Alignment.LEFT);
+        versionFont2 = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 10, FontEntity.Alignment.CENTER);
+        versionFont3 = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 5, FontEntity.Alignment.RIGHT);
 
-        errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716));
-        errorFont.x = Constants.WIDTH / 2f;
-        errorFont.y = 5;
+        errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "", Constants.WIDTH / 2f, 5, FontEntity.Alignment.CENTER);
 
         if (!context.leaderboardsInitialized && !context.leaderboardsRequesting) {
             errorFont.setText("fetching leaderboards...");
@@ -136,6 +135,8 @@ public class TitleScreen extends Screen {
         engineFont.render(sb);
         creditsFont.render(sb);
         versionFont.render(sb);
+        versionFont2.render(sb);
+        versionFont3.render(sb);
         if (errorFontTime > 0) {
             errorFont.render(sb);
         }

@@ -9,21 +9,10 @@ import java.util.Map;
 
 public class AudioHandler {
 
-    public enum AudioState {
-        ON,
-        MUSIC,
-        SFX,
-        OFF
-    }
-
     private final Map<String, Music> music;
     private final Map<String, Sound> sounds;
 
     private MusicConfig currentlyPlaying;
-
-    private AudioState audioState = AudioState.ON;
-    private boolean musicMuted = false;
-    private boolean sfxMuted = false;
 
     public AudioHandler() {
         music = new HashMap<>();
@@ -47,42 +36,6 @@ public class AudioHandler {
         sounds.put(key, Gdx.audio.newSound(Gdx.files.internal(fileName)));
     }
 
-    public AudioState getAudioState() {
-        return audioState;
-    }
-
-    public AudioState nextAudioState() {
-        if (audioState == AudioState.ON) {
-            audioState = AudioState.MUSIC;
-            setMuteState(false, true);
-        } else if (audioState == AudioState.MUSIC) {
-            audioState = AudioState.SFX;
-            setMuteState(true, false);
-        } else if (audioState == AudioState.SFX) {
-            audioState = AudioState.OFF;
-            setMuteState(true, true);
-        } else {
-            audioState = AudioState.ON;
-            setMuteState(false, false);
-        }
-        return audioState;
-    }
-
-    private void setMuteState(boolean musicMuted, boolean sfxMuted) {
-        this.musicMuted = musicMuted;
-        this.sfxMuted = sfxMuted;
-        if (currentlyPlaying != null) {
-            if (musicMuted) {
-                currentlyPlaying.mute();
-            } else {
-                currentlyPlaying.play();
-            }
-        }
-        if (sfxMuted) {
-            for (Sound it : sounds.values()) it.stop();
-        }
-    }
-
     public boolean isMusicPlaying() {
         if (currentlyPlaying == null) return false;
         if (currentlyPlaying.getMusic() == null) return false;
@@ -98,7 +51,7 @@ public class AudioHandler {
             stopMusic();
         }
         currentlyPlaying = new MusicConfig(music.get(key), volume, looping);
-        if (!musicMuted) currentlyPlaying.play();
+        currentlyPlaying.play();
     }
 
     public void stopMusic() {
@@ -116,16 +69,11 @@ public class AudioHandler {
         playSound(key, volume, false);
     }
 
-    public void playSoundCut(String key) {
-        playSound(key, 1, true);
-    }
-
     public void playSoundCut(String key, float volume) {
         playSound(key, volume, true);
     }
 
     public void playSound(String key, float volume, boolean cut) {
-        if (sfxMuted) return;
         for (Map.Entry<String, Sound> entry : sounds.entrySet()) {
             if (entry.getKey().equals(key)) {
                 if (cut) entry.getValue().stop();
