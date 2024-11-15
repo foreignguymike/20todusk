@@ -24,8 +24,6 @@ public class TitleScreen extends Screen {
     private final FontEntity engineFont;
     private final FontEntity creditsFont;
     private final FontEntity versionFont;
-    private final FontEntity versionFont2;
-    private final FontEntity versionFont3;
 
     private final FontEntity errorFont;
     private float errorFontTime;
@@ -50,9 +48,7 @@ public class TitleScreen extends Screen {
         playerFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "Player: " + context.data.name, 5, Constants.HEIGHT - 10);
         engineFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "libGDX", 4, 15);
         creditsFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "mike", 4, 5);
-        versionFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 15, FontEntity.Alignment.LEFT);
-        versionFont2 = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 10, FontEntity.Alignment.CENTER);
-        versionFont3 = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 5, FontEntity.Alignment.RIGHT);
+        versionFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), Constants.VERSION_STRING, Constants.WIDTH - 5, 5, FontEntity.Alignment.RIGHT);
 
         errorFont = new FontEntity(context, context.getFont(Context.FONT_NAME_M5X716), "", Constants.WIDTH / 2f, 5, FontEntity.Alignment.CENTER);
 
@@ -135,8 +131,6 @@ public class TitleScreen extends Screen {
         engineFont.render(sb);
         creditsFont.render(sb);
         versionFont.render(sb);
-        versionFont2.render(sb);
-        versionFont3.render(sb);
         if (errorFontTime > 0) {
             errorFont.render(sb);
         }
