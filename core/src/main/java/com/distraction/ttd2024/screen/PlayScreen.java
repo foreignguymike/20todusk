@@ -332,7 +332,7 @@ public class PlayScreen extends Screen {
                 doneText.setText("HIGH SCORE!");
                 context.data.set(player.score, save);
             } else {
-                doneText.setText("Try again! :)");
+                doneText.setText("Try again!");
             }
         }
         if (done && !isReplay) {

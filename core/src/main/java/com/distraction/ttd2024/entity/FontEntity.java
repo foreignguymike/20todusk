@@ -25,13 +25,6 @@ public class FontEntity extends Entity {
     private String currentText = "";
     private Color color = Color.WHITE;
 
-    public FontEntity(Context context, BitmapFont font) {
-        super(context);
-        this.font = font;
-        glyphLayout = new GlyphLayout();
-        glyphLayout.setText(font,"");
-    }
-
     public FontEntity(Context context, BitmapFont font, String text, float x, float y, Alignment alignment) {
         this(context, font, text, x, y);
         this.alignment = alignment;
