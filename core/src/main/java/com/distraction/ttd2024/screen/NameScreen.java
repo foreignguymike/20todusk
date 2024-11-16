@@ -172,12 +172,13 @@ public class NameScreen extends Screen {
     }
 
     private boolean validName() {
-        return !context.data.name.isEmpty();
+        return !context.data.name.isBlank();
     }
 
     private void submitName() {
         if (validName()) {
             ignoreInput = true;
+            context.data.name = context.data.name.trim();
             out.start();
             Gdx.input.setInputProcessor(null);
             context.audio.playSound("select");
