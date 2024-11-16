@@ -172,7 +172,7 @@ public class NameScreen extends Screen {
     }
 
     private boolean validName() {
-        return !context.data.name.isBlank();
+        return !context.data.name.trim().isEmpty();
     }
 
     private void submitName() {
