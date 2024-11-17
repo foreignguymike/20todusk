@@ -2,6 +2,7 @@ package com.distraction.ttd2024;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.distraction.ttd2024.gj.GameJoltClient;
 import com.distraction.ttd2024.screen.NameScreen;
@@ -23,6 +24,10 @@ public class Main extends ApplicationAdapter {
         client.initialize(Constants.APP_ID, Constants.API_KEY);
         context.client = client;
         context.sm.push(new NameScreen(context));
+
+        Gdx.input.setCatchKey(Input.Keys.UP, true);
+        Gdx.input.setCatchKey(Input.Keys.DOWN, true);
+        Gdx.input.setCatchKey(Input.Keys.SPACE, true);
     }
 
     @Override
